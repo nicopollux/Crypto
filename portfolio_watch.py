@@ -263,7 +263,7 @@ def show_trades(trades) :
 if __name__ == "__main__":
 
 	if len(sys.argv) < 2 :
-		print(u"Please use # python binance.py settings.xml")
+		print(u"Please use # python {} settings.xml".format(sys.argv[0]))
 		sys.exit(1)
 	else :
 		tree = ET.parse(sys.argv[1])

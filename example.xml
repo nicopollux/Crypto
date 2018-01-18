@@ -1,7 +1,10 @@
 <?xml version="1.0"?>
 <data>
+
+  <output>/tmp/output</output>
+
   <service name="binance">
-    <api_key>YOUR_KEY</api_key>
-    <api_secret>YOUR_SECRET</api_secret>
+	<api_key>YOUR_KEY</api_key>
+	<api_secret>YOUR_SECRET</api_secret>
   </service>
 </data>

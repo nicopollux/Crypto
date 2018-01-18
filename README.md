@@ -16,7 +16,7 @@ Based on python-binance api - https://github.com/sammchardy/python-binance
 
 Show a status of your finance portfolio in real-time, with pending transactions
 
-- Launch : `python portfolio_watch.py yourfile.xml`
+- Launch : `python portfolio_watch.py --params ../crypto.xml`
 
 ```
     ---------- Portfolio ----
@@ -38,5 +38,6 @@ Show a status of your finance portfolio in real-time, with pending transactions
 Record Binance market price in a csv file for further analysis
 
 - Update output line in your conf file
-- Launch : `python market_watch.py yourfile.xml`
+- Launch : `python market_watch.py --params ../crypto.xml --loop 10`
+- File is updated every 10sec
 

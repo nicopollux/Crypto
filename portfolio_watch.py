@@ -1,14 +1,16 @@
 import sys
 
-import xml.etree.ElementTree as ET
-
-from binance.client import Client
+import argparse
 
 import pandas as pd
 import numpy as np
 
 import crypto
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--params", type=str, help="file.xml", required=True)
+parser.add_argument("--save", type=bool, help="Save portfolio", default=False)
+option = parser.parse_args()
 
 def get_original_buy_transactions(client,portfolio) :
 
@@ -83,19 +85,8 @@ def get_original_buy_transactions(client,portfolio) :
 
 if __name__ == "__main__":
 
-	if len(sys.argv) < 2 :
-		print(u"Please use # python {} settings.xml".format(sys.argv[0]))
-		sys.exit(1)
-	else :
-		tree = ET.parse(sys.argv[1])
-		settings = tree.getroot()
-
-		for service in settings.findall('service') :
-			if service.get("name") == "binance" :
-				api_key = service.find("api_key").text
-				api_secret = service.find("api_secret").text
-
-	client = Client(api_key, api_secret)
+	client = crypto.utils.get_binance_client(option.params)
+	out_dir = crypto.utils.get_out_dir(option.params)
 
 	# Get prices
 	market_prices = crypto.market.get_market_prices(client)

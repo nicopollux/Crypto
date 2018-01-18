@@ -10,9 +10,15 @@ def get_market_prices(client) :
 	market_prices['time'] = crypto.utils.current_milli_time()
 
 	prices = client.get_all_tickers()
-	# print(prices)
 	for price in prices :
 		market_prices[price['symbol']] = float(price['price'])
+		# print('[{0}] {1}'.format(price['symbol'],price['price']))
+
+	market_prices['ETHETH'] = 1
+	market_prices['BTCBTC'] = 1
+	market_prices['BTCETH'] = 1 / market_prices['ETHBTC']
+	market_prices['USDTETH'] = 1 / market_prices['ETHUSDT']
+	market_prices['USDTBTC'] = 1 / market_prices['BTCUSDT']
 
 	return market_prices
 

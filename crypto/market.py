@@ -12,6 +12,7 @@ def get_market_prices(client) :
 
 	prices = client.get_all_tickers()
 	for price in prices :
+		if price['symbol'] == '123456' : continue
 		market_prices[price['symbol']] = float(price['price'])
 		# print('[{0}] {1}'.format(price['symbol'],price['price']))
 

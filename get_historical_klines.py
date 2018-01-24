@@ -22,6 +22,7 @@ if __name__ == "__main__":
 	if option.pair == 'ALL' :
 		prices = client.get_all_tickers()
 		for price in prices :
+			if price['symbol'] == '123456' : continue
 			list_pairs.append(price['symbol'])
 	else :
 		list_pairs.append(option.pair)

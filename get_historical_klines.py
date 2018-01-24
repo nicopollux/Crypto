@@ -19,7 +19,7 @@ if __name__ == "__main__":
 	out_dir = crypto.utils.get_out_dir(option.params)
 
 	list_pairs = []
-	if option.pair == ALL :
+	if option.pair == 'ALL' :
 		prices = client.get_all_tickers()
 		for price in prices :
 			list_pairs.append(price['symbol'])

@@ -37,4 +37,4 @@ def get_out_dir(file) :
 	out_dir = settings.find('output').text
 	if not os.path.exists(out_dir): os.makedirs(out_dir)
 	if not os.path.exists(out_dir+'/market'): os.makedirs(out_dir+'/market')
-	return out_dir+'/market'
+	return out_dir

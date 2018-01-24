@@ -1,5 +1,6 @@
 import time
 import argparse
+import sys
 
 from datetime import datetime, date
 
@@ -26,13 +27,21 @@ if __name__ == "__main__":
 	else :
 		list_pairs.append(option.pair)
 
+	print(list_pairs)
+	sys.exit(1)
+
 	# Binance opening : 14/07/2017
-	date = datetime(2017, 7, 14)
+	date_original = datetime(2017, 7, 14)
 	date_max = datetime(2018, 1, 23)
 
 	loop_timer = 0.5
 	for pair in list_pairs :
+
+		file = out_dir+'/history_'+pair+".csv"
+		if os.path.exists(file) : continue
+
 		resultat = pd.DataFrame()
+		date = date_original
 		while date < date_max :
 			df = crypto.klines.get_historical_klines(client,pair,date)
 			last_date = df.tail(1).index[0]
@@ -42,7 +51,6 @@ if __name__ == "__main__":
 
 			time.sleep(loop_timer)
 
-		file = out_dir+'/klines_'+option.pair+".csv"
 		resultat.to_csv(file)
 
 

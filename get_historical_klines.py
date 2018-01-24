@@ -1,6 +1,5 @@
 import time
 import argparse
-import sys
 
 from datetime import datetime, date
 
@@ -26,9 +25,6 @@ if __name__ == "__main__":
 			list_pairs.append(price['symbol'])
 	else :
 		list_pairs.append(option.pair)
-
-	print(list_pairs)
-	sys.exit(1)
 
 	# Binance opening : 14/07/2017
 	date_original = datetime(2017, 7, 14)

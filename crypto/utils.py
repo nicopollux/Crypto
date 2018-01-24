@@ -1,5 +1,5 @@
 import os
-import time
+import time, datetime
 
 import xml.etree.ElementTree as ET
 
@@ -7,6 +7,17 @@ from binance.client import Client
 
 # Time
 current_milli_time = lambda: int(round(time.time() * 1000))
+
+def dateparse(time_in_secs):
+	return datetime.datetime.fromtimestamp(int(time_in_secs)/1000).strftime('%d/%m/%Y %H:%M:%S')
+
+def convert_to_paris_time(client,row):
+    return pd.to_datetime(row.datetime_local).tz_convert('Europe/Paris')
+
+# Misc
+
+def percent_change(old_price, new_price) :
+	return (((new_price - old_price) / old_price) * 100)
 
 def get_binance_client(file) :
 	tree = ET.parse(file)

@@ -7,7 +7,8 @@ import crypto
 
 def get_market_prices(client) :
 	market_prices = {}
-	market_prices['time'] = crypto.utils.current_milli_time()
+	market_prices['time'] = crypto.utils.dateparse(crypto.utils.current_milli_time())
+	print(market_prices['time'])
 
 	prices = client.get_all_tickers()
 	for price in prices :

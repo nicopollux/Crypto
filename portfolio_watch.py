@@ -14,13 +14,18 @@ option = parser.parse_args()
 
 def get_original_buy_transactions(client,portfolio) :
 
-	# For each trade in porteflio, try to get origin
+	# For each trade in portflio, try to get origin
 	symbols = portfolio.index.values
 
 	res = pd.DataFrame()
 
 	for s in symbols :
-		t = get_all_trades(client,s)
+
+		# debug
+		if s != 'VIBE' : continue
+
+		print("Looking for [{}] buy orders".format(s))
+		t = crypto.trades.get_all_trades(client,s)
 		res = pd.concat([res,t])
 
 	res = res.drop('id', 1)
@@ -43,44 +48,43 @@ def get_original_buy_transactions(client,portfolio) :
 
 	# A quoi ca sert 'isMaker' ?
 	# print(res)
-	print(res[['source','quantity','price','com','comAsset','time']])
+	#print(res[['source','quantity','price','com','comAsset','time']])
 
-	avg_val = []
+	res = res[['source','quantity','price','time']]
+	res.sort_values(by='time', inplace=True, ascending=False)
+	#t['time'] = t.to_datetime(t['time'])
+	print(res)
+	# print(t.sort('time'))
+
+	buy_price = []
+	buy_symbol = []
 	for s in symbols :
-		print(s)
-		pf = portfolio.loc[portfolio.index == s]
-		quantity = float(pf.iloc[0]['quantity'])
-		print('Looking for {0}'.format(quantity))
+		# Debug
+		if s != 'VIBE' : continue
 
+		pf = portfolio.loc[portfolio.index == s]
+		bag = float(pf.iloc[0]['quantity'])
+		print('Looking for {0} units of {1}'.format(bag,s))
 
 		value = 0
+		b_symbol = '-'
+
+		quantity = bag
 		r = res.loc[res.index == s]
 		print(r)
 		for index, row in r.iterrows():
 			b_qty = float(row['quantity'])
 			b_price = float(row['price'])
+			b_symbol = float(row['source'])
 			if quantity > 0 :
 				quantity = quantity - b_qty
-				value += b_price*b_qty
+				value += b_price * b_qty
 				print('bought {0} at {1}'.format(b_qty,b_price))
 		value = value / float(pf.iloc[0]['quantity'])
-		print('average value {0}'.format(value))
-		avg_val.append(value)
-
-	# # Trade in eth
-	# trade_eth = False
-	# if asset_name+'ETH' in market_prices and len(trades_eth) > 0 :
-	# 	asset_buy = float(trades_eth[len(trades_eth)-1]['price'])
-	# 	asset_gain_eth = asset_balance * ( asset_eth - asset_buy )
-	# 	trade_eth = True
-
-	# # Trade in btc
-	# trade_btc = False
-	# if asset_name+'BTC' in market_prices and len(trades_btc) > 0 :
-	# 	asset_buy = float(trades_btc[len(trades_btc)-1]['price'])
-	# 	asset_gain_btc = asset_balance * ( asset_btc - asset_buy )
-	# 	trade_btc = True
-
+		print('Looking for {0} units of {1}'.format(bag,s))
+		print('Bought value {0}'.format(value))
+		buy_price.append(value)
+		buy_symbol.append(b_symbol)
 
 
 if __name__ == "__main__":
@@ -107,6 +111,7 @@ if __name__ == "__main__":
 	crypto.trades.show_trades(trades)
 
 	# In progress :
+	#get_original_buy_transactions(client, portfolio)
 
 	# depth = client.get_order_book(symbol='ETHBTC')
 	# candles = client.get_klines(symbol='ETHBTC', interval=Client.KLINE_INTERVAL_30MINUTE)

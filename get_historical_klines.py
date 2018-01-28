@@ -1,7 +1,7 @@
 import os, time
 import argparse
 
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 import pandas as pd
 
@@ -29,21 +29,31 @@ if __name__ == "__main__":
 
 	# Binance opening : 14/07/2017
 	date_original = datetime(2017, 7, 14)
-	date_max = datetime(2018, 1, 23)
+	date_max = datetime.utcnow()
 
 	loop_timer = 0.5
 	for pair in list_pairs :
-
 		file = out_dir+'/history_'+pair+".csv"
-		if os.path.exists(file) : continue
 
-		resultat = pd.DataFrame()
-		date = date_original
-		while date < date_max :
+		# If file exists, complete
+		if os.path.exists(file) :
+			print('[{}] already found.. load and complete'.format(pair))
+			resultat = pd.read_csv(file)
+			resultat.index = resultat['time']
+			resultat['time'] = resultat['time'].apply(pd.to_datetime)
+			resultat = resultat.drop('time', 1)
+			date = datetime.strptime(resultat.tail(1).index[0], '%Y-%m-%d %H:%M:%S')
+
+		# If not, get all history
+		else :
+			resultat = pd.DataFrame()
+			date = date_original
+
+		while date_max - date > timedelta(minutes = 5) :
 			df = crypto.klines.get_historical_klines(client,pair,date)
 			last_date = df.tail(1).index[0]
 			date = last_date
-			print('[{0}] {1}'.format(pair,date))
+			print('[{0}] Getting {1}'.format(pair,date))
 			resultat = pd.concat([resultat, df])
 
 			time.sleep(loop_timer)

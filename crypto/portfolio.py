@@ -11,7 +11,7 @@ def get_portfolio(client) :
 	df.index =  df['symbol']
 	df = df.drop('symbol', 1)
 
-	return df[(df['quantity'] > 0 )]
+	return df[(df['quantity'] > 0)]
 
 def add_market_prices_to_portfolio(portfolio, market_prices) :
 	portfolio_eth = []
@@ -34,7 +34,7 @@ def add_market_prices_to_portfolio(portfolio, market_prices) :
 
 	return portfolio
 
-def show_portfolio(portfolio) :
+def show_portfolio(portfolio,dust) :
 
 	print('\n---------- Portfolio ----')
 	if 'eth' not in portfolio :
@@ -45,7 +45,8 @@ def show_portfolio(portfolio) :
 
 		portfolio['quantity'] = portfolio['quantity'].map(lambda x: '%2.3f' % x)
 		portfolio['usd'] = portfolio['usd'].map(lambda x: '%2.2f' % x)
+		portfolio['usd'] = portfolio['usd'].apply(pd.to_numeric)
 
 		portfolio['Percent'] = pd.Series(["{0:.0f}%".format(val * 100) for val in portfolio['Percent']], index = portfolio.index)
 
-	print(portfolio)
+	print(portfolio[(portfolio['usd'] > dust)])

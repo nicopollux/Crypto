@@ -10,6 +10,7 @@ import crypto
 parser = argparse.ArgumentParser()
 parser.add_argument("--params", type=str, help="file.xml", required=True)
 parser.add_argument("--save", type=bool, help="Save portfolio", default=False)
+parser.add_argument("--dust", help="Show dust", action='store_true')
 option = parser.parse_args()
 
 def get_original_buy_transactions(client,portfolio) :
@@ -107,7 +108,12 @@ if __name__ == "__main__":
 	# add current prices (eth, btc, usd)
 	portfolio = crypto.portfolio.add_market_prices_to_portfolio(portfolio,market_prices)
 
-	crypto.portfolio.show_portfolio(portfolio)
+	if option.dust :
+		dust_limit = 0
+	else :
+		dust_limit = 5
+
+	crypto.portfolio.show_portfolio(portfolio,dust_limit)
 	crypto.trades.show_trades(trades)
 
 	# In progress :

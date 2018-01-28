@@ -30,6 +30,17 @@ def get_binance_client(file) :
 
 	return Client(api_key, api_secret)
 
+def get_kucoin_client(file) :
+	tree = ET.parse(file)
+	settings = tree.getroot()
+
+	for service in settings.findall('service') :
+		if service.get("name") == "kucoin" :
+			api_key = service.find("api_key").text
+			api_secret = service.find("api_secret").text
+
+	return Client(api_key, api_secret)
+
 def get_out_dir(file) :
 	tree = ET.parse(file)
 	settings = tree.getroot()

@@ -8,15 +8,14 @@ import numpy as np
 
 import crypto
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--params", type=str, help="file.xml", required=True)
-parser.add_argument("--loop", type=int, help="Loop time in sec (0 one shot)", default=0)
-parser.add_argument("--save", type=bool, help="Write file True/False", default=False)
-#parser.add_argument("--symbol", type=str, help="Market Symbol (Ex: XVGBTC)", default='ALL')
-option = parser.parse_args()
-
-
 if __name__ == "__main__":
+
+	parser = argparse.ArgumentParser()
+	parser.add_argument("--params", type=str, help="file.xml", required=True)
+	parser.add_argument("--loop", type=int, help="Loop time in sec (0 one shot)", default=0)
+	parser.add_argument("--save", type=bool, help="Write file True/False", default=False)
+	#parser.add_argument("--symbol", type=str, help="Market Symbol (Ex: XVGBTC)", default='ALL')
+	option = parser.parse_args()
 
 	client = crypto.utils.get_binance_client(option.params)
 	out_dir = crypto.utils.get_out_dir(option.params)

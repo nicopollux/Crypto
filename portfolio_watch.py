@@ -12,6 +12,7 @@ parser.add_argument("--params", type=str, help="file.xml", required=True)
 parser.add_argument("--save", type=bool, help="Save portfolio", default=False)
 parser.add_argument("--dust", help="Show dust", action='store_true')
 option = parser.parse_args()
+kucoin = 0
 
 def get_original_buy_transactions(client,portfolio) :
 
@@ -90,23 +91,38 @@ def get_original_buy_transactions(client,portfolio) :
 
 if __name__ == "__main__":
 
-	client = crypto.utils.get_binance_client(option.params)
+	
+	# Try kucoin
+	if(kucoin) : 
+		client = crypto.utils.get_kucoin_client(option.params)
+	else : 
+		client = crypto.utils.get_binance_client(option.params)
+
 	out_dir = crypto.utils.get_out_dir(option.params)
 
 	# Get prices
-	market_prices = crypto.market.get_market_prices(client)
+	if(kucoin) :
+		market_prices = crypto.market.get_market_prices_kucoin(client)
+	else :
+		market_prices = crypto.market.get_market_prices(client)
 
 	# Get portfolio and add equivalent values
-	portfolio = crypto.portfolio.get_portfolio(client)
-
+	if(kucoin) :
+		portfolio = crypto.portfolio.get_portfolio_kucoin(client)
+	else :
+		portfolio = crypto.portfolio.get_portfolio(client)
 	# Get active trading position
-	trades = crypto.trades.get_active_trades(client,market_prices)
+	if(kucoin == 0) :
+		trades = crypto.trades.get_active_trades(client,market_prices)
+
 
 	# add active trades to portfolio
-	portfolio = crypto.trades.add_active_trades_to_portfolio(portfolio, trades)
+	if(kucoin == 0) :
+		portfolio = crypto.trades.add_active_trades_to_portfolio(portfolio, trades)
 
 	# add current prices (eth, btc, usd)
-	portfolio = crypto.portfolio.add_market_prices_to_portfolio(portfolio,market_prices)
+	if(kucoin == 0) :
+		portfolio = crypto.portfolio.add_market_prices_to_portfolio(portfolio,market_prices)
 
 	if option.dust :
 		dust_limit = 0
@@ -114,7 +130,7 @@ if __name__ == "__main__":
 		dust_limit = 5
 
 	crypto.portfolio.show_portfolio(portfolio,dust_limit)
-	crypto.trades.show_trades(trades)
+	#crypto.trades.show_trades(trades)
 
 	# In progress :
 	#get_original_buy_transactions(client, portfolio)

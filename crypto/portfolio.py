@@ -1,6 +1,21 @@
 import pandas as pd
 import numpy as np
 
+def get_portfolio_kucoin(client) :
+	info = client.get_all_balances()
+
+	df = pd.DataFrame(info)
+
+
+	# df['balance'] = df['free'].apply(pd.to_numeric)
+	df = df.drop(['freezeBalance','balanceStr', 'freezeBalanceStr'],1)
+	df.columns = ['quantity', 'symbol']
+	df.index =  df['symbol']
+	df = df.drop('symbol', 1)
+
+	return df[(df['quantity'] > 0)]
+
+
 def get_portfolio(client) :
 	info = client.get_account()
 

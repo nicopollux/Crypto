@@ -135,7 +135,9 @@ if __name__ == "__main__":
 		crypto.portfolio.show_portfolio_kucoin(portfolio,dust_limit)
 	else :
 		crypto.portfolio.show_portfolio(portfolio,dust_limit)
-	#crypto.trades.show_trades(trades)
+
+	if(kucoin == 0) :
+		crypto.trades.show_trades(trades)
 
 	# In progress :
 	#get_original_buy_transactions(client, portfolio)

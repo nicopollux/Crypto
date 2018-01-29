@@ -49,6 +49,24 @@ def add_market_prices_to_portfolio(portfolio, market_prices) :
 
 	return portfolio
 
+def add_market_prices_to_portfolio_kucoin(portfolio, market_prices) :
+	
+	portfolio_usd = []
+	portfolio_btc = []
+
+	portfolio['quantity'] = portfolio['quantity'].apply(pd.to_numeric)
+
+	for s in portfolio.index.values :
+		if s in market_prices :
+			portfolio_usd.append(market_prices[s])
+			portfolio_btc.append(market_prices[s]/market_prices['BTC'])
+
+
+	portfolio['btc'] = portfolio['quantity'] * portfolio_btc
+	portfolio['usd'] = portfolio['quantity'] * portfolio_usd
+
+	return portfolio
+
 def show_portfolio(portfolio,dust) :
 
 	print('\n---------- Portfolio ----')
@@ -65,3 +83,11 @@ def show_portfolio(portfolio,dust) :
 		portfolio['Percent'] = pd.Series(["{0:.0f}%".format(val * 100) for val in portfolio['Percent']], index = portfolio.index)
 
 	print(portfolio[(portfolio['usd'] > dust)])
+
+def show_portfolio_kucoin(portfolio,dust) :
+
+	print('\n---------- Portfolio ----')
+	#portfolio['quantity'] = portfolio['quantity'].map(lambda x: '%2.3f' % x)
+	portfolio.loc['Total'] = portfolio.sum()
+	# portfolio['Percent'] = pd.Series(["{0:.0f}%".format(val * 100) for val in portfolio['Percent']], index = portfolio.index)
+	print(portfolio)

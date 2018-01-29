@@ -12,7 +12,7 @@ parser.add_argument("--params", type=str, help="file.xml", required=True)
 parser.add_argument("--save", type=bool, help="Save portfolio", default=False)
 parser.add_argument("--dust", help="Show dust", action='store_true')
 option = parser.parse_args()
-kucoin = 0
+kucoin = 1
 
 def get_original_buy_transactions(client,portfolio) :
 
@@ -121,7 +121,9 @@ if __name__ == "__main__":
 		portfolio = crypto.trades.add_active_trades_to_portfolio(portfolio, trades)
 
 	# add current prices (eth, btc, usd)
-	if(kucoin == 0) :
+	if(kucoin == 1) :
+		portfolio = crypto.portfolio.add_market_prices_to_portfolio_kucoin(portfolio,market_prices)
+	else :
 		portfolio = crypto.portfolio.add_market_prices_to_portfolio(portfolio,market_prices)
 
 	if option.dust :
@@ -129,7 +131,10 @@ if __name__ == "__main__":
 	else :
 		dust_limit = 5
 
-	crypto.portfolio.show_portfolio(portfolio,dust_limit)
+	if(kucoin == 1) :
+		crypto.portfolio.show_portfolio_kucoin(portfolio,dust_limit)
+	else :
+		crypto.portfolio.show_portfolio(portfolio,dust_limit)
 	#crypto.trades.show_trades(trades)
 
 	# In progress :

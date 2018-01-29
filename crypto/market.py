@@ -10,10 +10,11 @@ def get_market_prices_kucoin(client) :
 	market_prices['time'] = crypto.utils.dateparse(crypto.utils.current_milli_time())
 	print(market_prices['time'])
 
-	lastDealPrices = client.get_tick()
-	for lastDealPrice in lastDealPrices :
-		if lastDealPrice['symbol'] == '123456' : continue
-		market_prices[lastDealPrice['symbol']] = float(lastDealPrice['lastDealPrice'])
+	prices = client.get_tick()
+
+	for price in prices :
+		#if price['coinType'] == '123456' : continue
+		market_prices[price['coinType']] = float(price['lastDealPrice'])
 		# print('[{0}] {1}'.format(price['symbol'],price['price']))
 
 	#market_prices['ETHETH'] = 1

@@ -3,7 +3,7 @@ import time, datetime
 
 import xml.etree.ElementTree as ET
 
-from binance.client import Client
+from binance.client import Client as binanceClient
 
 # Time
 current_milli_time = lambda: int(round(time.time() * 1000))
@@ -28,18 +28,18 @@ def get_binance_client(file) :
 			api_key = service.find("api_key").text
 			api_secret = service.find("api_secret").text
 
-	return Client(api_key, api_secret)
+	return binanceClient(api_key, api_secret)
 
-def get_kucoin_client(file) :
-	tree = ET.parse(file)
-	settings = tree.getroot()
+# def get_kucoin_client(file) :
+# 	tree = ET.parse(file)
+# 	settings = tree.getroot()
 
-	for service in settings.findall('service') :
-		if service.get("name") == "kucoin" :
-			api_key = service.find("api_key").text
-			api_secret = service.find("api_secret").text
+# 	for service in settings.findall('service') :
+# 		if service.get("name") == "kucoin" :
+# 			api_key = service.find("api_key").text
+# 			api_secret = service.find("api_secret").text
 
-	return Client(api_key, api_secret)
+# 	return Client(api_key, api_secret)
 
 def get_out_dir(file) :
 	tree = ET.parse(file)

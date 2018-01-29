@@ -50,6 +50,9 @@ if __name__ == "__main__":
 			date = date_original
 
 		while date_max - date > timedelta(minutes = 5) :
+			print(date)
+			print(date_max)
+
 			df = crypto.klines.get_historical_klines(client,pair,date)
 			last_date = df.tail(1).index[0]
 			date = last_date

@@ -91,11 +91,11 @@ def get_original_buy_transactions(client,portfolio) :
 
 if __name__ == "__main__":
 
-	
+
 	# Try kucoin
-	if(kucoin) : 
+	if(kucoin) :
 		client = crypto.utils.get_kucoin_client(option.params)
-	else : 
+	else :
 		client = crypto.utils.get_binance_client(option.params)
 
 	out_dir = crypto.utils.get_out_dir(option.params)
@@ -130,7 +130,7 @@ if __name__ == "__main__":
 		dust_limit = 5
 
 	crypto.portfolio.show_portfolio(portfolio,dust_limit)
-	#crypto.trades.show_trades(trades)
+	crypto.trades.show_trades(trades)
 
 	# In progress :
 	#get_original_buy_transactions(client, portfolio)

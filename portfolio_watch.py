@@ -121,7 +121,9 @@ if __name__ == "__main__":
 		portfolio = crypto.trades.add_active_trades_to_portfolio(portfolio, trades)
 
 	# add current prices (eth, btc, usd)
-	if(kucoin == 0) :
+	if(kucoin == 1) :
+		portfolio = crypto.portfolio.add_market_prices_to_portfolio_kucoin(portfolio,market_prices)
+	else :
 		portfolio = crypto.portfolio.add_market_prices_to_portfolio(portfolio,market_prices)
 
 	if option.dust :
@@ -129,8 +131,13 @@ if __name__ == "__main__":
 	else :
 		dust_limit = 5
 
-	crypto.portfolio.show_portfolio(portfolio,dust_limit)
-	#crypto.trades.show_trades(trades)
+	if(kucoin == 1) :
+		crypto.portfolio.show_portfolio_kucoin(portfolio,dust_limit)
+	else :
+		crypto.portfolio.show_portfolio(portfolio,dust_limit)
+
+	if(kucoin == 0) :
+		crypto.trades.show_trades(trades)
 
 	# In progress :
 	#get_original_buy_transactions(client, portfolio)

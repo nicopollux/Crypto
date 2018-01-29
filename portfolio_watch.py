@@ -12,7 +12,7 @@ parser.add_argument("--params", type=str, help="file.xml", required=True)
 parser.add_argument("--save", type=bool, help="Save portfolio", default=False)
 parser.add_argument("--dust", help="Show dust", action='store_true')
 option = parser.parse_args()
-kucoin = 1
+kucoin = 0
 
 def get_original_buy_transactions(client,portfolio) :
 

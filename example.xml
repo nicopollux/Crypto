@@ -3,8 +3,16 @@
 
   <output>/tmp/output</output>
 
+  <!-- Fill sections or remove them if not needed -->
+
   <service name="binance">
 	<api_key>YOUR_KEY</api_key>
 	<api_secret>YOUR_SECRET</api_secret>
   </service>
+
+  <service name="kucoin">
+	<api_key>YOUR_KEY</api_key>
+	<api_secret>YOUR_SECRET</api_secret>
+  </service>
+
 </data>

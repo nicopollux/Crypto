@@ -10,7 +10,9 @@ Based on python-binance api - https://github.com/sammchardy/python-binance
 - Generate API credits using https://www.binance.com/userCenter/createApi.html
 ('Read info' parameter is enough for that)
 - Add API credits in example.xml file and rename it to something else.
-- Install dependancies : `pip install python-binance`
+- Install dependancies :
+`pip install python-binance` for binance
+`pip install python-kucoin` for kucoin
 
 ## Portfolio
 

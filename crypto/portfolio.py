@@ -4,6 +4,8 @@ import numpy as np
 from binance.client import Client as binanceClient
 from kucoin.client import Client as kucoinClient
 
+import crypto
+
 def get_portfolio(client) :
 	if type(client) is binanceClient :
 		info = client.get_account()
@@ -43,19 +45,18 @@ def add_market_prices_to_portfolio(portfolio, market_prices) :
 
 	return portfolio
 
-def get_original_buy_transactions(client,portfolio) :
+def add_original_buy_transactions(client,portfolio,market) :
+	no_symbols = ['Total','USDT','BTC','ETH','BNB']
 
-	# For each trade in portflio, try to get origin
+	# For each symbol in portflio, try to get origin
 	symbols = portfolio.index.values
 
 	res = pd.DataFrame()
 
 	for s in symbols :
+		if s in no_symbols : continue
 
-		# debug
-		if s != 'VIBE' : continue
-
-		print("Looking for [{}] buy orders".format(s))
+		# print("Looking for [{}] buy orders".format(s))
 		t = crypto.trades.get_all_trades(client,s)
 		res = pd.concat([res,t])
 
@@ -77,47 +78,53 @@ def get_original_buy_transactions(client,portfolio) :
 	res['price'] = res['price'].apply(pd.to_numeric)
 	res['com'] = res['com'].apply(pd.to_numeric)
 
-	# A quoi ca sert 'isMaker' ?
 	# print(res)
-	#print(res[['source','quantity','price','com','comAsset','time']])
+	# print(res[['source','quantity','price','com','comAsset','time']])
 
+	# We drop 'com','comAsset' but we can use them later
+	# We have all transactions, sorted by most recent first
 	res = res[['source','quantity','price','time']]
 	res.sort_values(by='time', inplace=True, ascending=False)
 	#t['time'] = t.to_datetime(t['time'])
-	print(res)
-	# print(t.sort('time'))
+	# print(res)
 
-	buy_price = []
-	buy_symbol = []
+	change_percent = []
 	for s in symbols :
-		# Debug
-		if s != 'VIBE' : continue
+		if s in no_symbols :
+			change_percent.append(0)
+			continue;
 
 		pf = portfolio.loc[portfolio.index == s]
 		bag = float(pf.iloc[0]['quantity'])
-		print('Looking for {0} units of {1}'.format(bag,s))
+		# print('Looking for {0} units of {1}'.format(bag,s))
 
 		value = 0
 		b_symbol = '-'
 
 		quantity = bag
 		r = res.loc[res.index == s]
-		print(r)
+		# print(r)
 		for index, row in r.iterrows():
+			# need to keep consistency in source
+			if b_symbol != '-' and b_symbol != row['source'] : continue
 			b_qty = float(row['quantity'])
 			b_price = float(row['price'])
-			b_symbol = float(row['source'])
+			b_symbol = row['source']
 			if quantity > 0 :
+				value += b_price * min(b_qty,quantity)
+				# print('bought {0} at {1}'.format(min(b_qty,quantity),b_price))
 				quantity = quantity - b_qty
-				value += b_price * b_qty
-				print('bought {0} at {1}'.format(b_qty,b_price))
 		value = value / float(pf.iloc[0]['quantity'])
-		print('Looking for {0} units of {1}'.format(bag,s))
-		print('Bought value {0}'.format(value))
-		buy_price.append(value)
-		buy_symbol.append(b_symbol)
 
+		if value == 0 :
+			change_percent.append(0)
+		else :
+			actual_price = market[s+b_symbol]
+			print('Bought {0} units of {1} at {2} {3} per unit (actual price {4}) '.format(bag, s, value, b_symbol, actual_price))
+			change_percent.append("{0:.0f}%".format(crypto.utils.percent_change(value,actual_price)))
 
+	portfolio['change'] = change_percent
+	print(portfolio)
 
 # def add_market_prices_to_portfolio_kucoin(portfolio, market_prices) :
 
@@ -146,7 +153,9 @@ def show_portfolio(portfolio,dust) :
 		portfolio['Percent'] = portfolio['eth']/ portfolio['eth'].sum()
 		portfolio.loc['Total'] = portfolio.sum()
 
-		portfolio['quantity'] = portfolio['quantity'].map(lambda x: '%2.3f' % x)
+		portfolio['quantity'] = portfolio['quantity'].map(lambda x: '%2.2f' % x)
+		portfolio['eth'] = portfolio['eth'].map(lambda x: '%2.5f' % x)
+		portfolio['btc'] = portfolio['btc'].map(lambda x: '%2.5f' % x)
 		portfolio['usd'] = portfolio['usd'].map(lambda x: '%2.2f' % x)
 		portfolio['usd'] = portfolio['usd'].apply(pd.to_numeric)
 

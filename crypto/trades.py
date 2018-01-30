@@ -153,3 +153,5 @@ def show_trades(trades) :
 
 	# Remove column with only null values
 	# trades.loc[:, (trades != 0).any(axis=0)]
+
+

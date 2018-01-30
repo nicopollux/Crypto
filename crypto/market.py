@@ -4,9 +4,11 @@ import time
 import csv
 
 import crypto
+
 from binance.client import Client as binanceClient
 from kucoin.client import Client as kucoinClient
 
+# Return dictionary with pairs as index (ie ETHBTC) and value.
 def get_market_prices(client) :
 	market_prices = {}
 	market_prices['time'] = crypto.utils.dateparse(crypto.utils.current_milli_time())

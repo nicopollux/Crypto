@@ -19,7 +19,7 @@ if __name__ == "__main__":
 	out_dir = crypto.utils.get_out_dir(option.params)
 
 	for client in clients :
-		print(type(client))
+		#print(type(client))
 
 		# Get prices
 		market_prices = crypto.market.get_market_prices(client)
@@ -44,15 +44,8 @@ if __name__ == "__main__":
 		crypto.portfolio.show_portfolio(portfolio,dust_limit)
 		crypto.trades.show_trades(trades)
 
-	# In progress :
-	#get_original_buy_transactions(client, portfolio)
-
-	# depth = client.get_order_book(symbol='ETHBTC')
-	# candles = client.get_klines(symbol='ETHBTC', interval=Client.KLINE_INTERVAL_30MINUTE)
-	# print(candles)
-
-	# add buy price for each
-	# get_original_buy_transactions(client,portfolio)
+		# In beta :
+		#crypto.portfolio.add_original_buy_transactions(client, portfolio, market_prices)
 
 
 

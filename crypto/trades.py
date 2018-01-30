@@ -34,6 +34,39 @@ def get_active_trades(client,market_prices) :
 	df['distance'] = df['target'] - df['price']
 	return df
 
+def get_active_trades_kucoin(client,market_prices) :
+	trades = client.active_orders()
+
+	if len(trades) == 0 :
+		return pd.DataFrame()
+
+	df = pd.DataFrame(trades)
+	df = df.drop('clientOrderId', 1)
+	df = df.drop('executedQty', 1)
+	df = df.drop('icebergQty', 1)
+	df = df.drop('isWorking', 1)
+	df = df.drop('orderId', 1)
+	df = df.drop('status', 1)
+	df = df.drop('timeInForce', 1)
+	df.index =  df['symbol']
+	df = df.drop('symbol', 1)
+
+	df.rename(columns={'origQty':'quantity'}, inplace=True)
+	df.rename(columns={'price':'target'}, inplace=True)
+
+	df['quantity'] = df['quantity'].apply(pd.to_numeric)
+	df['target'] = df['target'].apply(pd.to_numeric)
+	df['stopPrice'] = df['stopPrice'].apply(pd.to_numeric)
+
+	df['time'] = pd.to_datetime(df['time'], unit='ms')
+
+	actual_price = []
+	for s in df.index.values :
+		actual_price.append(market_prices[s])
+	df['price'] = actual_price
+	df['distance'] = df['target'] - df['price']
+	return df
+
 def rchop(thestring):
 	if thestring.endswith('ETH') :
 		return thestring[:-len('ETH')]

@@ -1,10 +1,13 @@
 import pandas as pd
 import numpy as np
 
+from binance.client import Client as binanceClient
+from kucoin.client import Client as kucoinClient
+
 def get_active_trades(client,market_prices) :
 	if type(client) is binanceClient :
 		trades = client.get_open_orders()
-	elif
+	elif type(client) is kucoinClient :
 		trades = client.active_orders()
 
 	if len(trades) == 0 :

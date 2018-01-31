@@ -20,7 +20,7 @@ if __name__ == "__main__":
 
 	for client in clients :
 		#print(type(client))
-
+		crypto.utils.verify_time(client)
 		# Get prices
 		market_prices = crypto.market.get_market_prices(client)
 
@@ -45,7 +45,9 @@ if __name__ == "__main__":
 		crypto.trades.show_trades(trades)
 
 		# In beta :
+		crypto.utils.get_ethereum_balances(option.params)
 		#crypto.portfolio.add_original_buy_transactions(client, portfolio, market_prices)
+
 
 
 

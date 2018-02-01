@@ -16,6 +16,8 @@ def get_clients(file) :
 
 	for service in settings.findall('service') :
 		client = None
+		name = service.get("name")
+
 		if service.get("name") == "binance" :
 			api_key = service.find("api_key").text
 			api_secret = service.find("api_secret").text
@@ -27,6 +29,8 @@ def get_clients(file) :
 
 		if verify_time(client) :
 			clients.append(client)
+		else :
+			print('Client {} not available'.format(name))
 
 	return clients
 

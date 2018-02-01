@@ -74,6 +74,9 @@ def verify_time(client) :
 		timestamp = client.get_server_time()['serverTime']
 	elif type(client) is kucoinClient :
 		timestamp = client.get_last_timestamp()
+		# no output here ! Fake timestamp for now
+		timestamp = 1517501261679
+
 
 	if not timestamp :
 		return False

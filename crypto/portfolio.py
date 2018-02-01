@@ -13,7 +13,9 @@ def get_portfolio(client) :
 		df['free'] = df['free'].apply(pd.to_numeric)
 		df = df.drop('locked', 1)
 		df.columns = ['symbol', 'quantity']
-	elif type(client) is binanceClient :
+	elif type(client) is kucoinClient :
+		# no info here
+		info = client.get_all_balances()
 		df = pd.DataFrame(info)
 		df = df.drop(['freezeBalance','balanceStr', 'freezeBalanceStr'],1)
 		df.columns = ['quantity', 'symbol']

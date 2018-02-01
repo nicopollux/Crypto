@@ -8,7 +8,8 @@ def get_active_trades(client,market_prices) :
 	if type(client) is binanceClient :
 		trades = client.get_open_orders()
 	elif type(client) is kucoinClient :
-		trades = client.active_orders()
+		# not yet implemented
+		trades = []
 
 	if len(trades) == 0 :
 		return pd.DataFrame()

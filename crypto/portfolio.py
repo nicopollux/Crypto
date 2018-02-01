@@ -13,11 +13,12 @@ def get_portfolio(client) :
 		df['free'] = df['free'].apply(pd.to_numeric)
 		df = df.drop('locked', 1)
 		df.columns = ['symbol', 'quantity']
-
 	elif type(client) is binanceClient :
 		df = pd.DataFrame(info)
 		df = df.drop(['freezeBalance','balanceStr', 'freezeBalanceStr'],1)
 		df.columns = ['quantity', 'symbol']
+	else :
+		return pd.DataFrame()
 
 	df.index =  df['symbol']
 	df = df.drop('symbol', 1)

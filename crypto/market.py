@@ -21,7 +21,7 @@ def get_market_prices(client) :
 			market_prices[price['symbol']] = float(price['price'])
 			# print('[{0}] {1}'.format(price['symbol'],price['price']))
 
-	elif type(client) is binanceClient :
+	elif type(client) is kucoinClient :
 		prices = client.get_tick()
 		for price in prices :
 			market_prices[price['coinType']+price['coinTypePair']] = float(price['lastDealPrice'])

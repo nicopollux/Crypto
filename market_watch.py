@@ -8,6 +8,9 @@ import numpy as np
 
 import crypto
 
+from binance.client import Client as binanceClient
+from kucoin.client import Client as kucoinClient
+
 if __name__ == "__main__":
 
 	parser = argparse.ArgumentParser()
@@ -17,12 +20,17 @@ if __name__ == "__main__":
 	#parser.add_argument("--symbol", type=str, help="Market Symbol (Ex: XVGBTC)", default='ALL')
 	option = parser.parse_args()
 
-	client = crypto.utils.get_binance_client(option.params)
+	clients = crypto.utils.get_clients(option.params)
 	out_dir = crypto.utils.get_out_dir(option.params)
 
-	local_timestamp = crypto.utils.current_milli_time()
-	binance_timestamp = client.get_server_time()['serverTime']
-	server_lag = binance_timestamp - local_timestamp
+	# binance only
+	client = None
+	for c in clients :
+		if type(c) is binanceClient :
+			client = c
+
+	if client is None :
+		sys.exit(1)
 
 	if option.loop > 0 :
 		while True :

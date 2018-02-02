@@ -11,8 +11,13 @@ Based on python-binance api - https://github.com/sammchardy/python-binance
 ('Read info' parameter is enough for that)
 - Add API credits in example.xml file and rename it to something else.
 - Install dependancies :
-`pip install python-binance` for binance
-`pip install python-kucoin` for kucoin
+`pip install --user -r requirements.txt`
+
+- For setting a specific conda environnment :
+```
+conda create -n python3 python=3.6 anaconda
+source activate python3
+```
 
 ## Portfolio
 

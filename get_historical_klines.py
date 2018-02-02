@@ -5,6 +5,9 @@ from datetime import datetime, date, timedelta
 
 import pandas as pd
 
+from binance.client import Client as binanceClient
+from kucoin.client import Client as kucoinClient
+
 import crypto
 
 parser = argparse.ArgumentParser()

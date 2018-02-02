@@ -15,8 +15,17 @@ option = parser.parse_args()
 
 if __name__ == "__main__":
 
-	client = crypto.utils.get_binance_client(option.params)
+	clients = crypto.utils.get_clients(option.params)
 	out_dir = crypto.utils.get_out_dir(option.params)
+
+	# binance only
+	client = None
+	for c in clients :
+		if type(c) is binanceClient :
+			client = c
+
+	if client is None :
+		sys.exit(1)
 
 	list_pairs = []
 	if option.pair == 'ALL' :

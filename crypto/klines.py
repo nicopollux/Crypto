@@ -77,7 +77,6 @@ def format_klines(client,df) :
 	df['Low'] = df['Low'].apply(pd.to_numeric)
 	df['Close'] = df['Close'].apply(pd.to_numeric)
 
-	print(df)
 	return df
 
 def show_klines(df) :

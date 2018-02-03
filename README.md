@@ -3,13 +3,27 @@ Crypto and Altcoins stuff
 
 Some python code dedicated to Altcoins.
 
-## General
+## Support
 
-Based on python-binance api - https://github.com/sammchardy/python-binance
+### Binance
+
+Binance is one of the best trading platform.
+If you don't have an account yet, please use my referral link :
+https://www.binance.com/?ref=18697575
 
 - Generate API credits using https://www.binance.com/userCenter/createApi.html
-('Read info' parameter is enough for that)
+('Read info' parameter is enough for getting informations)
 - Add API credits in example.xml file and rename it to something else.
+
+- This code uses python-binance - https://github.com/sammchardy/python-binance
+- Binance fees : https://www.binance.com/fees.html
+
+### KuCoin
+
+In progress
+
+## Install
+
 - Install dependancies :
 `pip install --user -r requirements.txt`
 
@@ -57,7 +71,7 @@ Relaunch and update since last time
 
 - Launch : `python get_historical_klines.py --params ../crypto.xml --pair ETHBTC`
 
-Can launch with 'ALL' for every pair available (300Mb data).
+Can launch with `--pair ALL` for every pair available (300Mb data for binance).
 
 ```
 $ head -n 3 crypto/history_BNBBTC.csv

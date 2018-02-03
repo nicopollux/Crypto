@@ -8,44 +8,67 @@ from datetime import datetime, date
 
 import crypto
 
-from binance.client import Client
+from binance.client import Client as binanceClient
+from kucoin.client import Client as kucoinClient
 
 # Get Historical data (for training model use) :
 # pair can be 'NEOBTC'
 # when should be a date string DD/MM/YYYY
 # Warning : We stay in UTC !!
 
-def get_historical_klines(client, pair, day) :
-	timestamp = int(time.mktime(day.timetuple())) * 1000
-	# print(timestamp)
-	klines = client.get_klines(symbol=pair, interval=Client.KLINE_INTERVAL_5MINUTE, startTime=timestamp)
-	return format_klines(pd.DataFrame(klines))
+def get_historical_klines(client, pair, day, dateMax) :
+	if type(client) is binanceClient :
+		timestamp = int(time.mktime(day.timetuple())) * 1000
+		klines = client.get_klines(symbol=pair, interval=binanceClient.KLINE_INTERVAL_5MINUTE, startTime=timestamp)
+	elif type(client) is kucoinClient :
+		timestamp = int(time.mktime(day.timetuple()))
+		timestamp_max = int(time.mktime(dateMax.timetuple()))
+		klines = client.get_kline_data_tv(pair, kucoinClient.RESOLUTION_5MINUTES, timestamp, timestamp_max)
 
-def get_klines(pair) :
-	klines = client.get_klines(symbol=pair, interval=Client.KLINE_INTERVAL_1MINUTE)
-	return format_klines(pd.DataFrame(klines))
+	return format_klines(client, pd.DataFrame(klines))
 
-# Return time is in Paris time
-def format_klines(df) :
-	df.columns = ['Open time', 'Open', 'High','Low','Close','Volume','Close time','Quote asse volume','Number of trades','Taker base','Taker quote','Ignore']
-	df = df.drop('Quote asse volume', 1)
-	df = df.drop('Number of trades', 1)
-	df = df.drop('Taker base', 1)
-	df = df.drop('Taker quote', 1)
-	df = df.drop('Ignore', 1)
-	df = df.drop('Close time', 1)
+# def get_klines(pair) :
+# 	klines = client.get_klines(symbol=pair, interval=Client.KLINE_INTERVAL_1MINUTE)
+# 	return format_klines(pd.DataFrame(klines))
 
-	# Sort with last in first
-	df.sort_values(by='Open time', inplace=True, ascending=True)
+# Reformat klines to get ['time','Open', 'High','Low','Close','Volume']
+# Return time is in UTC time
+def format_klines(client,df) :
+	if type(client) is binanceClient :
+		df.columns = ['Open time','Open', 'High','Low','Close','Volume','Close time','Quote asse volume','Number of trades','Taker base','Taker quote','Ignore']
+
+		# Remove unused columns
+		df = df.drop('Close time', 1)
+		df = df.drop('Quote asse volume', 1)
+		df = df.drop('Number of trades', 1)
+		df = df.drop('Taker base', 1)
+		df = df.drop('Taker quote', 1)
+		df = df.drop('Ignore', 1)
+
+		# Convert unix timestamp (ms) to UTC date
+		df['time'] = pd.to_datetime(df['Open time'], unit='ms')
+		df = df.drop('Open time', 1)
+
+	elif type(client) is kucoinClient :
+		df.columns = ['Close','High','Low','Open','Status','Open time','Volume']
+		df = df.drop('Status', 1)
+
+		# Reorder
+		cols = ['Open time','Open', 'High','Low','Close','Volume']
+		df = df[cols]
+
+		# Convert unix timestamp (s) to UTC date
+		df['time'] = pd.to_datetime(df['Open time'], unit='s')
+		df = df.drop('Open time', 1)
+
+		# print(df.head(10))
 
 	# Remove lines without transfer
 	df['Volume'] = df['Volume'].apply(pd.to_numeric)
 	df = df[(df['Volume'] > 0 )]
 
-	# Convert unix timestamp (ms) to UTC date
-	df['time'] = pd.to_datetime(df['Open time'], unit='ms')
-	df = df.drop('Open time', 1)
-
+	# Sort with last in first and put as index
+	df.sort_values(by='time', inplace=True, ascending=True)
 	df.index =  df['time']
 	df = df.drop('time', 1)
 
@@ -54,6 +77,7 @@ def format_klines(df) :
 	df['Low'] = df['Low'].apply(pd.to_numeric)
 	df['Close'] = df['Close'].apply(pd.to_numeric)
 
+	print(df)
 	return df
 
 def show_klines(df) :

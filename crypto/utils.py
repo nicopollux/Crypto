@@ -26,7 +26,6 @@ def get_clients(file) :
 			api_key = service.find("api_key").text
 			api_secret = service.find("api_secret").text
 			client = kucoinClient(api_key, api_secret)
-			print(client)
 
 		if verify_time(client) :
 			clients.append(client)
@@ -34,6 +33,23 @@ def get_clients(file) :
 			print('Client {} not available'.format(name))
 
 	return clients
+
+# Get list of pairs we can trade
+# Binance is ETHBTC type, kucoin is ETH-BTC
+
+def get_all_pairs(client) :
+	list_pairs = []
+	if type(client) is binanceClient :
+		pairs = client.get_all_tickers()
+		for pair in pairs :
+			if pair['symbol'] == '123456' : continue
+			list_pairs.append(pair['symbol'])
+	elif type(client) is kucoinClient :
+		pairs = client.get_tick()
+		for pair in pairs :
+			list_pairs.append(pair['coinType']+'-'+pair['coinTypePair'])
+
+	return list_pairs
 
 def get_ethereum_balances(file) :
 	balances = {}
@@ -71,15 +87,15 @@ def verify_time(client) :
 	if not client :
 		return False
 
+	timestamp = None
 	if type(client) is binanceClient :
 		timestamp = client.get_server_time()['serverTime']
 	elif type(client) is kucoinClient :
+		# timestamp = client.get_last_timestamp()
+		# no output here ! pass this step with currency verif
 		currencies = client.get_currencies()
-		print(currencies)
-		timestamp = client.get_last_timestamp()
-		print(timestamp)
-		# no output here ! Fake timestamp for now
-		timestamp = 1517501261679
+		if currencies['rates'] :
+			return True
 
 	if not timestamp :
 		return False

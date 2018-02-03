@@ -69,8 +69,12 @@ def get_out_dir(file) :
 	settings = tree.getroot()
 
 	out_dir = settings.find('output').text
+	# Create paths
 	if not os.path.exists(out_dir): os.makedirs(out_dir)
-	if not os.path.exists(out_dir+'/market'): os.makedirs(out_dir+'/market')
+	rep = ['market','history','history/binance','history/kucoin']
+	for r in rep :
+		if not os.path.exists(out_dir+r): os.makedirs(out_dir+r)
+
 	return out_dir
 
 

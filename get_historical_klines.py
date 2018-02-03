@@ -48,9 +48,9 @@ if __name__ == "__main__":
 		loop_timer = 0.5
 		for pair in list_pairs :
 			if type(client) is binanceClient :
-				file = out_dir+'/binance_history_'+pair+".csv"
+				file = out_dir+'/history/binance/history_'+pair+".csv"
 			elif type(client) is kucoinClient :
-				file = out_dir+'/kucoin_history_'+pair+".csv"
+				file = out_dir+'/history/kucoin/history_'+pair+".csv"
 
 			# If file exists, complete
 			if os.path.exists(file) :

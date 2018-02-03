@@ -3,11 +3,18 @@ import numpy as np
 
 from binance.client import Client as binanceClient
 from kucoin.client import Client as kucoinClient
+from poloniex import Poloniex as poloClient
+
+import crypto
 
 def get_active_trades(client,market_prices) :
 	if type(client) is binanceClient :
 		trades = client.get_open_orders()
+		pairs = crypto.utils.get_all_pairs(client)
 	elif type(client) is kucoinClient :
+		# not yet implemented
+		trades = []
+	elif type(client) is poloClient :
 		# not yet implemented
 		trades = []
 
@@ -36,38 +43,20 @@ def get_active_trades(client,market_prices) :
 
 	actual_price = []
 	for s in df.index.values :
-		actual_price.append(market_prices[s])
+		for x, y in pairs.items():    # for name, age in list.items():  (for Python 3.x)
+			if y == s:
+				actual_price.append(market_prices[x])
 	df['price'] = actual_price
 	df['distance'] = df['target'] - df['price']
 	return df
-
-def rchop(thestring):
-	if thestring.endswith('ETH') :
-		return thestring[:-len('ETH')]
-	elif thestring.endswith('BTC') :
-		return thestring[:-len('BTC')]
-	elif thestring.endswith('USDT') :
-		return thestring[:-len('USDT')]
-	else :
-		return thestring
-
-def unit(thestring):
-	if thestring.endswith('ETH') :
-		return 'ETH'
-	elif thestring.endswith('BTC') :
-		return 'BTC'
-	elif thestring.endswith('USDT') :
-		return 'USDT'
-	else :
-		return thestring
 
 def add_active_trades_to_portfolio(portfolio, trades) :
 
 	if trades.empty :
 		return portfolio
 
-	trades['clean'] = trades.index.map(lambda x: rchop(x))
-	trades['unit'] = trades.index.map(lambda x: unit(x))
+	trades['clean'] = trades.index.map(lambda x: crypto.utils.rchop(x))
+	trades['unit'] = trades.index.map(lambda x: crypto.utils.unit(x))
 
 	# If we buy, we still have needed btc/eth/usdt
 	# If we sell, we still have the alt

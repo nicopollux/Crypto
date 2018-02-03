@@ -28,23 +28,26 @@ def get_portfolio(client) :
 	return df[(df['quantity'] > 0)]
 
 def add_market_prices_to_portfolio(portfolio, market_prices) :
+	if portfolio.empty :
+		return pd.DataFrame()
+
 	portfolio_eth = []
 	portfolio_btc = []
 
 	portfolio['quantity'] = portfolio['quantity'].apply(pd.to_numeric)
 
 	for s in portfolio.index.values :
-		if s+'ETH' in market_prices :
-			portfolio_eth.append(market_prices[s+'ETH'])
+		if s+'-ETH' in market_prices :
+			portfolio_eth.append(market_prices[s+'-ETH'])
 		else :
-			portfolio_eth.append(market_prices[s+'BTC']/market_prices['ETHBTC'])
-		if s+'BTC' in market_prices :
-			portfolio_btc.append(market_prices[s+'BTC'])
+			portfolio_eth.append(market_prices[s+'-BTC']/market_prices['ETH-BTC'])
+		if s+'-BTC' in market_prices :
+			portfolio_btc.append(market_prices[s+'-BTC'])
 
 
 	portfolio['eth'] = portfolio['quantity'] * portfolio_eth
 	portfolio['btc'] = portfolio['quantity'] * portfolio_btc
-	portfolio['usd'] = portfolio['eth'] * market_prices['ETHUSDT']
+	portfolio['usd'] = portfolio['eth'] * market_prices['ETH-USDT']
 
 	return portfolio
 
@@ -148,6 +151,9 @@ def add_original_buy_transactions(client,portfolio,market) :
 # 	return portfolio
 
 def show_portfolio(portfolio,dust) :
+	if portfolio.empty :
+		print('\n----- empty Portfolio ----')
+		return
 
 	print('\n---------- Portfolio ----')
 	if 'eth' not in portfolio :

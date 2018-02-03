@@ -13,14 +13,18 @@ if __name__ == "__main__":
 	parser.add_argument("--params", type=str, help="file.xml", required=True)
 	parser.add_argument("--save", type=bool, help="Save portfolio", default=False)
 	parser.add_argument("--dust", help="Show dust", action='store_true')
+	parser.add_argument("--exchange", type=str, help="platform (binance or kucoin)", required=False)
 	option = parser.parse_args()
 
 	clients = crypto.utils.get_clients(option.params)
 	out_dir = crypto.utils.get_out_dir(option.params)
 
 	for client in clients :
-		#print(type(client))
-		crypto.utils.verify_time(client)
+		if option.exchange is not None and option.exchange != crypto.utils.get_client_name(client) :
+			continue
+
+		print(crypto.utils.get_client_name(client))
+		# crypto.utils.verify_time(client)
 		# Get prices
 		market_prices = crypto.market.get_market_prices(client)
 

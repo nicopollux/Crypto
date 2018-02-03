@@ -16,10 +16,9 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--params", type=str, help="file.xml", required=True)
 	parser.add_argument("--pair", type=str, help="Pair to trade (ie ETHBTC)", required=False)
-	parser.add_argument("--exchange", type=str, help="platform (binance or kucoin)", required=False)
+	parser.add_argument("--exchange", type=str, help="platform (binance, kucoin, poloniex)", required=False)
 	#parser.add_argument("--year", type=int, help="Year to check", required=True)
 	option = parser.parse_args()
-
 
 	clients = crypto.utils.get_clients(option.params)
 	out_dir = crypto.utils.get_out_dir(option.params)
@@ -30,13 +29,13 @@ if __name__ == "__main__":
 		if option.exchange is not None and option.exchange != crypto.utils.get_client_name(client) :
 			continue
 
-		list_pairs = []
+		list_pairs = {}
 		if option.pair is None :
 			list_pairs = crypto.utils.get_all_pairs(client)
 		else :
 			pairs_available = crypto.utils.get_all_pairs(client)
-			if option.pair in pairs_available :
-				list_pairs.append(option.pair)
+			if option.pair in pairs_available.keys() :
+				list_pairs[option.pair] = pairs_available[option.pair]
 			else :
 				print('Pair {0} not available on {1}'.format(option.pair,crypto.utils.get_client_name(client)))
 
@@ -49,6 +48,7 @@ if __name__ == "__main__":
 		elif type(client) is poloClient :
 			# Dont know when opening but 01/01/2016 seems good.
 			date_original = datetime(2016, 1, 1)
+		elif type(client) is bitfinexClient :
 			# date_max = datetime(2015, 10, 1)
 			# df = crypto.klines.get_historical_klines(client,'BTC_ETH',date_original,date_max)
 			# print(df)
@@ -80,7 +80,7 @@ if __name__ == "__main__":
 				# print(date)
 				# print(date_max)
 
-				df = crypto.klines.get_historical_klines(client,pair,date,date_max)
+				df = crypto.klines.get_historical_klines(client,list_pairs[pair],date,date_max)
 				last_date = df.tail(1).index[0]
 				print('[{0}] Updated from {1} to {2}'.format(pair,date,last_date))
 
@@ -94,8 +94,3 @@ if __name__ == "__main__":
 				time.sleep(loop_timer)
 
 			resultat.to_csv(file)
-
-
-
-
-

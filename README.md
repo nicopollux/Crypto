@@ -93,13 +93,13 @@ Record Binance real time market price in a csv file for further analysis
 
 # Market history (works with binance, kucoin and poloniex)
 
-Record Binance 5 minutes candles for further analysis (and model training)
-On first launch, save historical data since Binance opening (14/07/2017)
-Relaunch and update since last time
+Record 5 minutes candles for further analysis (and model training)
+On first launch, save historical data since exchange opening
+If relaunch, it updates file since last record
 
-- Launch : `python get_historical_klines.py --params ../crypto.xml --pair ETHBTC`
+- Launch : `python get_historical_klines.py --params ../crypto.xml`
 
-Can launch with `--pair ALL` for every pair available (300Mb data for binance).
+Can launch with a special pair (exchange dependant) `--pair ETHBTC` or on a given exchange `--exchange binance`.
 
 ```
 $ head -n 3 crypto/history_BNBBTC.csv

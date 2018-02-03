@@ -7,9 +7,6 @@ from binance.client import Client as binanceClient
 from kucoin.client import Client as kucoinClient
 from poloniex import Poloniex as poloClient
 
-def percent_change(old_price, new_price) :
-	return (((new_price - old_price) / old_price) * 100)
-
 def get_clients(file) :
 	clients = []
 	tree = ET.parse(file)
@@ -47,30 +44,35 @@ def get_client_name(client) :
 		return 'kucoin'
 	elif type(client) is poloClient :
 		return 'poloniex'
+	else :
+		return None
 
-# Get list of pairs we can trade
-# Formats :
+# Get list of pairs we can trade in universal XXX-YYY format with equivalents in
 # binance  : ETHBTC
 # kucoin   : ETH-BTC
 # poloniex : BTC_ETH
 
 def get_all_pairs(client) :
-	list_pairs = []
+	list_pairs = {}
 	if type(client) is binanceClient :
 		pairs = client.get_all_tickers()
 		for pair in pairs :
 			if pair['symbol'] == '123456' : continue
-			list_pairs.append(pair['symbol'])
+			p = rchop(pair['symbol'])
+			u = unit(pair['symbol'])
+			list_pairs[p+'-'+u] = pair['symbol']
 	elif type(client) is kucoinClient :
 		pairs = client.get_tick()
 		for pair in pairs :
-			list_pairs.append(pair['coinType']+'-'+pair['coinTypePair'])
+			list_pairs[pair['coinType']+'-'+pair['coinTypePair']] = pair['coinType']+'-'+pair['coinTypePair']
 	elif type(client) is poloClient :
 		pairs = client.returnTicker()
 		for pair in pairs.keys() :
-			list_pairs.append(pair)
+			p = pair.split('_')
+			list_pairs[p[1]+'_'+p[0]] = pair
 
 	# print(list_pairs)
+	# return list_pairs.values()
 	return list_pairs
 
 def get_ethereum_balances(file) :
@@ -144,3 +146,32 @@ def verify_time(client) :
 	# print(' Delta is {}'.format(time_loc-time_ser))
 	if time_loc - time_ser < 1000 :
 		return True
+
+# Misc
+
+def percent_change(old_price, new_price) :
+	return (((new_price - old_price) / old_price) * 100)
+
+def rchop(thestring):
+	if thestring.endswith('ETH') :
+		return thestring[:-len('ETH')]
+	elif thestring.endswith('BTC') :
+		return thestring[:-len('BTC')]
+	elif thestring.endswith('BNB') :
+		return thestring[:-len('BNB')]
+	elif thestring.endswith('USDT') :
+		return thestring[:-len('USDT')]
+	else :
+		return thestring
+
+def unit(thestring):
+	if thestring.endswith('ETH') :
+		return 'ETH'
+	elif thestring.endswith('BTC') :
+		return 'BTC'
+	elif thestring.endswith('BNB') :
+		return 'BNB'
+	elif thestring.endswith('USDT') :
+		return 'USDT'
+	else :
+		return thestring

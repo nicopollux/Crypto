@@ -7,30 +7,47 @@ import crypto
 
 from binance.client import Client as binanceClient
 from kucoin.client import Client as kucoinClient
+from poloniex import Poloniex as poloClient
 
-# Return dictionary with pairs as index (ie ETHBTC) and value.
+# Return dictionary with pairs as index (ie ETH-BTC) and value.
+# Pairs are in global format.
 def get_market_prices(client) :
 	market_prices = {}
-	market_prices['time'] = crypto.utils.dateparse(crypto.utils.current_milli_time())
-	print(market_prices['time'])
+	# market_prices['time'] = crypto.utils.dateparse(crypto.utils.current_milli_time())
+	# print(market_prices['time'])
 
 	if type(client) is binanceClient :
 		prices = client.get_all_tickers()
 		for price in prices :
 			if price['symbol'] == '123456' : continue
-			market_prices[price['symbol']] = float(price['price'])
+			p = crypto.utils.rchop(price['symbol'])
+			u = crypto.utils.unit(price['symbol'])
+			market_prices[p+'-'+u] = float(price['price'])
 			# print('[{0}] {1}'.format(price['symbol'],price['price']))
 
 	elif type(client) is kucoinClient :
 		prices = client.get_tick()
 		for price in prices :
-			market_prices[price['coinType']+price['coinTypePair']] = float(price['lastDealPrice'])
+			market_prices[price['coinType']+'-'+price['coinTypePair']] = float(price['lastDealPrice'])
 
-	market_prices['ETHETH'] = 1
-	market_prices['BTCBTC'] = 1
-	market_prices['BTCETH'] = 1 / market_prices['ETHBTC']
-	market_prices['USDTETH'] = 1 / market_prices['ETHUSDT']
-	market_prices['USDTBTC'] = 1 / market_prices['BTCUSDT']
+	elif type(client) is poloClient :
+		prices = client.returnTicker()
+		for price in prices :
+			p = price.split('_')
+			# print(p)
+			market_prices[p[1]+'-'+p[0]] = float(prices[price]['last'])
+
+	market_prices['ETH-ETH'] = 1
+	market_prices['BTC-BTC'] = 1
+	if 'ETH-BTC' in market_prices :
+		market_prices['BTC-ETH'] = 1 / market_prices['ETH-BTC']
+	elif 'BTC-ETH' in market_prices :
+		market_prices['ETH-BTC'] = 1 / market_prices['BTC-ETH']
+
+	if 'ETH-USDT' in market_prices :
+		market_prices['USDT-ETH'] = 1 / market_prices['ETH-USDT']
+	if 'BTC-USDT' in market_prices :
+		market_prices['USDT-BTC'] = 1 / market_prices['BTC-USDT']
 
 	return market_prices
 

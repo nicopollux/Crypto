@@ -10,14 +10,15 @@ from kucoin.client import Client as kucoinClient
 
 import crypto
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--params", type=str, help="file.xml", required=True)
-parser.add_argument("--pair", type=str, help="Pair to trade (ALL for all)", required=True)
-# parser.add_argument("--exchange", type=str, help="platform (binance or kucoin)", required=False)
-#parser.add_argument("--year", type=int, help="Year to check", required=True)
-option = parser.parse_args()
-
 if __name__ == "__main__":
+
+	parser = argparse.ArgumentParser()
+	parser.add_argument("--params", type=str, help="file.xml", required=True)
+	parser.add_argument("--pair", type=str, help="Pair to trade (ALL for all)", required=True)
+	parser.add_argument("--exchange", type=str, help="platform (binance or kucoin)", required=False)
+	#parser.add_argument("--year", type=int, help="Year to check", required=True)
+	option = parser.parse_args()
+
 
 	clients = crypto.utils.get_clients(option.params)
 	out_dir = crypto.utils.get_out_dir(option.params)
@@ -25,6 +26,9 @@ if __name__ == "__main__":
 	date_max = datetime.utcnow()
 
 	for client in clients :
+		if option.exchange is not None and option.exchange != crypto.utils.get_client_name(client) :
+			continue
+
 		list_pairs = []
 		if option.pair == 'ALL' :
 			list_pairs = crypto.utils.get_all_pairs(client)
@@ -33,7 +37,7 @@ if __name__ == "__main__":
 			if option.pair in pairs_available :
 				list_pairs.append(option.pair)
 			else :
-				print('Pair {0} not available on {1}'.format(option.pair,client))
+				print('Pair {0} not available on {1}'.format(option.pair,crypto.utils.get_client_name(client)))
 		# print(list_pairs)
 
 		if type(client) is binanceClient :
@@ -46,6 +50,7 @@ if __name__ == "__main__":
 			# print(df)
 
 		loop_timer = 0.5
+		print ('{0} pairs found on {1}'.format(len(list_pairs),crypto.utils.get_client_name(client)))
 		for pair in list_pairs :
 			if type(client) is binanceClient :
 				file = out_dir+'/history/binance/history_'+pair+".csv"

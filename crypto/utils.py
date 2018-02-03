@@ -29,14 +29,20 @@ def get_clients(file) :
 
 		if verify_time(client) :
 			clients.append(client)
+			print('Connected to {0}'.format(get_client_name(client)))
 		else :
 			print('Client {} not available'.format(name))
 
 	return clients
 
+def get_client_name(client) :
+	if type(client) is binanceClient :
+		return 'binance'
+	elif type(client) is kucoinClient :
+		return 'kucoin'
+
 # Get list of pairs we can trade
 # Binance is ETHBTC type, kucoin is ETH-BTC
-
 def get_all_pairs(client) :
 	list_pairs = []
 	if type(client) is binanceClient :
@@ -73,7 +79,7 @@ def get_out_dir(file) :
 	if not os.path.exists(out_dir): os.makedirs(out_dir)
 	rep = ['market','history','history/binance','history/kucoin']
 	for r in rep :
-		if not os.path.exists(out_dir+r): os.makedirs(out_dir+r)
+		if not os.path.exists(out_dir+'/'+r): os.makedirs(out_dir+'/'+r)
 
 	return out_dir
 

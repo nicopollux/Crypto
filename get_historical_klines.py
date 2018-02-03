@@ -48,7 +48,7 @@ if __name__ == "__main__":
 		elif type(client) is poloClient :
 			# Dont know when opening but 01/01/2016 seems good.
 			date_original = datetime(2016, 1, 1)
-		elif type(client) is bitfinexClient :
+		# elif type(client) is bitfinexClient :
 			# date_max = datetime(2015, 10, 1)
 			# df = crypto.klines.get_historical_klines(client,'BTC_ETH',date_original,date_max)
 			# print(df)

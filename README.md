@@ -102,8 +102,16 @@ If relaunch, it updates file since last record
 Can launch with a special pair (exchange dependant) `--pair ETHBTC` or on a given exchange `--exchange binance`.
 
 ```
-$ head -n 3 crypto/history_BNBBTC.csv
+$ head -n 3 crypto/history/binance/history_BNBBTC.csv
 time,Open,High,Low,Close,Volume
 2017-07-14 04:00:00,5e-05,5.3e-05,1e-05,3.615e-05,1469912.0
 2017-07-14 04:05:00,3.9e-05,4e-05,3.655e-05,4e-05,1031546.0
 ```
+
+Be carefull, it can be heavy
+```
+du -hs crypto/history/*
+376M    crypto/history/binance
+119M    crypto/history/kucoin
+734M    crypto/history/poloniex/
+``

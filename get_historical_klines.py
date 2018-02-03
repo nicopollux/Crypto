@@ -45,7 +45,7 @@ if __name__ == "__main__":
 			date_original = datetime(2017, 7, 14)
 		elif type(client) is kucoinClient :
 			# Kucoin opening : 27/09/2017
-			date = datetime(2017, 9, 27)
+			date_original = datetime(2017, 9, 27)
 			# df = crypto.klines.get_historical_klines(client,pair,date,date_max)
 			# print(df)
 
@@ -65,8 +65,6 @@ if __name__ == "__main__":
 				resultat['time'] = resultat['time'].apply(pd.to_datetime)
 				resultat = resultat.drop('time', 1)
 				date = datetime.strptime(resultat.tail(1).index[0], '%Y-%m-%d %H:%M:%S')
-
-			# If not, get all history
 			else :
 				resultat = pd.DataFrame()
 				date = date_original

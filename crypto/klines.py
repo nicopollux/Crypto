@@ -10,6 +10,7 @@ import crypto
 
 from binance.client import Client as binanceClient
 from kucoin.client import Client as kucoinClient
+from poloniex import Poloniex as poloClient
 
 # Get Historical data (for training model use) :
 # pair can be 'NEOBTC'
@@ -24,6 +25,10 @@ def get_historical_klines(client, pair, day, dateMax) :
 		timestamp = int(time.mktime(day.timetuple()))
 		timestamp_max = int(time.mktime(dateMax.timetuple()))
 		klines = client.get_kline_data_tv(pair, kucoinClient.RESOLUTION_5MINUTES, timestamp, timestamp_max)
+	elif type(client) is poloClient :
+		timestamp = int(time.mktime(day.timetuple()))
+		timestamp_max = int(time.mktime(dateMax.timetuple()))
+		klines = client.returnChartData(pair, 300, start=timestamp, end=timestamp_max)
 
 	return format_klines(client, pd.DataFrame(klines))
 
@@ -52,6 +57,19 @@ def format_klines(client,df) :
 	elif type(client) is kucoinClient :
 		df.columns = ['Close','High','Low','Open','Status','Open time','Volume']
 		df = df.drop('Status', 1)
+
+		# Reorder
+		cols = ['Open time','Open', 'High','Low','Close','Volume']
+		df = df[cols]
+
+		# Convert unix timestamp (s) to UTC date
+		df['time'] = pd.to_datetime(df['Open time'], unit='s')
+		df = df.drop('Open time', 1)
+
+	elif type(client) is poloClient :
+		df.columns = ['Close','Open time','High','Low','Open','quoteVolume','Volume','weightedAverage']
+		df = df.drop('quoteVolume', 1)
+		df = df.drop('weightedAverage', 1)
 
 		# Reorder
 		cols = ['Open time','Open', 'High','Low','Close','Volume']

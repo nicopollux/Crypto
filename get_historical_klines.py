@@ -7,6 +7,7 @@ import pandas as pd
 
 from binance.client import Client as binanceClient
 from kucoin.client import Client as kucoinClient
+from poloniex import Poloniex as poloClient
 
 import crypto
 
@@ -14,7 +15,7 @@ if __name__ == "__main__":
 
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--params", type=str, help="file.xml", required=True)
-	parser.add_argument("--pair", type=str, help="Pair to trade (ALL for all)", required=True)
+	parser.add_argument("--pair", type=str, help="Pair to trade (ie ETHBTC)", required=False)
 	parser.add_argument("--exchange", type=str, help="platform (binance or kucoin)", required=False)
 	#parser.add_argument("--year", type=int, help="Year to check", required=True)
 	option = parser.parse_args()
@@ -30,7 +31,7 @@ if __name__ == "__main__":
 			continue
 
 		list_pairs = []
-		if option.pair == 'ALL' :
+		if option.pair is None :
 			list_pairs = crypto.utils.get_all_pairs(client)
 		else :
 			pairs_available = crypto.utils.get_all_pairs(client)
@@ -38,7 +39,6 @@ if __name__ == "__main__":
 				list_pairs.append(option.pair)
 			else :
 				print('Pair {0} not available on {1}'.format(option.pair,crypto.utils.get_client_name(client)))
-		# print(list_pairs)
 
 		if type(client) is binanceClient :
 			# Binance opening : 14/07/2017
@@ -46,9 +46,14 @@ if __name__ == "__main__":
 		elif type(client) is kucoinClient :
 			# Kucoin opening : 27/09/2017
 			date_original = datetime(2017, 9, 27)
-			# df = crypto.klines.get_historical_klines(client,pair,date,date_max)
+		elif type(client) is poloClient :
+			# Dont know when opening but 01/01/2016 seems good.
+			date_original = datetime(2016, 1, 1)
+			# date_max = datetime(2015, 10, 1)
+			# df = crypto.klines.get_historical_klines(client,'BTC_ETH',date_original,date_max)
 			# print(df)
 
+		# sys.exit(1)
 		loop_timer = 0.5
 		print ('{0} pairs found on {1}'.format(len(list_pairs),crypto.utils.get_client_name(client)))
 		for pair in list_pairs :
@@ -56,6 +61,8 @@ if __name__ == "__main__":
 				file = out_dir+'/history/binance/history_'+pair+".csv"
 			elif type(client) is kucoinClient :
 				file = out_dir+'/history/kucoin/history_'+pair+".csv"
+			elif type(client) is poloClient :
+				file = out_dir+'/history/poloniex/history_'+pair+".csv"
 
 			# If file exists, complete
 			if os.path.exists(file) :

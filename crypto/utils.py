@@ -5,6 +5,7 @@ import xml.etree.ElementTree as ET
 
 from binance.client import Client as binanceClient
 from kucoin.client import Client as kucoinClient
+from poloniex import Poloniex as poloClient
 
 def percent_change(old_price, new_price) :
 	return (((new_price - old_price) / old_price) * 100)
@@ -26,6 +27,10 @@ def get_clients(file) :
 			api_key = service.find("api_key").text
 			api_secret = service.find("api_secret").text
 			client = kucoinClient(api_key, api_secret)
+		elif service.get("name") == "poloniex" :
+			api_key = service.find("api_key").text
+			api_secret = service.find("api_secret").text
+			client = poloClient(api_key, api_secret)
 
 		if verify_time(client) :
 			clients.append(client)
@@ -40,9 +45,15 @@ def get_client_name(client) :
 		return 'binance'
 	elif type(client) is kucoinClient :
 		return 'kucoin'
+	elif type(client) is poloClient :
+		return 'poloniex'
 
 # Get list of pairs we can trade
-# Binance is ETHBTC type, kucoin is ETH-BTC
+# Formats :
+# binance  : ETHBTC
+# kucoin   : ETH-BTC
+# poloniex : BTC_ETH
+
 def get_all_pairs(client) :
 	list_pairs = []
 	if type(client) is binanceClient :
@@ -54,7 +65,12 @@ def get_all_pairs(client) :
 		pairs = client.get_tick()
 		for pair in pairs :
 			list_pairs.append(pair['coinType']+'-'+pair['coinTypePair'])
+	elif type(client) is poloClient :
+		pairs = client.returnTicker()
+		for pair in pairs.keys() :
+			list_pairs.append(pair)
 
+	# print(list_pairs)
 	return list_pairs
 
 def get_ethereum_balances(file) :
@@ -77,7 +93,7 @@ def get_out_dir(file) :
 	out_dir = settings.find('output').text
 	# Create paths
 	if not os.path.exists(out_dir): os.makedirs(out_dir)
-	rep = ['market','history','history/binance','history/kucoin']
+	rep = ['market','history','history/binance','history/kucoin','history/poloniex']
 	for r in rep :
 		if not os.path.exists(out_dir+'/'+r): os.makedirs(out_dir+'/'+r)
 
@@ -105,6 +121,11 @@ def verify_time(client) :
 		# no output here ! pass this step with currency verif
 		currencies = client.get_currencies()
 		if currencies['rates'] :
+			return True
+	elif type(client) is poloClient :
+		# no timestamp
+		tickers = client.returnTicker()
+		if tickers is not None and len(tickers) > 0 :
 			return True
 
 	if not timestamp :

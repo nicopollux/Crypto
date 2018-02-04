@@ -7,15 +7,18 @@ import numpy as np
 
 import crypto
 
-if __name__ == "__main__":
 
+def get_options() :
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--params", type=str, help="file.xml", required=True)
 	parser.add_argument("--save", type=bool, help="Save portfolio", default=False)
 	parser.add_argument("--dust", help="Show dust", action='store_true')
 	parser.add_argument("--exchange", type=str, help="platform (binance or kucoin)", required=False)
-	option = parser.parse_args()
+	return parser.parse_args()
 
+if __name__ == "__main__":
+
+	option = get_options()
 	clients = crypto.utils.get_clients(option.params)
 	out_dir = crypto.utils.get_out_dir(option.params)
 
@@ -49,9 +52,14 @@ if __name__ == "__main__":
 		crypto.trades.show_trades(trades)
 
 		# In beta :
-		crypto.utils.get_ethereum_balances(option.params)
+		# crypto.utils.get_ethereum_balances(option.params)
 		#crypto.portfolio.add_original_buy_transactions(client, portfolio, market_prices)
 
-
+	# import sys, traceback, threading
+	# thread_names = {t.ident: t.name for t in threading.enumerate()}
+	# for thread_id, frame in sys._current_frames().items():
+	# 	print("Thread %s:" % thread_names.get(thread_id, thread_id))
+	# 	traceback.print_stack(frame)
+	# 	print()
 
 

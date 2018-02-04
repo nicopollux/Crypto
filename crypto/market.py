@@ -28,7 +28,9 @@ def get_market_prices(client) :
 	elif type(client) is kucoinClient :
 		prices = client.get_tick()
 		for price in prices :
-			market_prices[price['coinType']+'-'+price['coinTypePair']] = float(price['lastDealPrice'])
+			# print(price)
+			if 'lastDealPrice' in price :
+				market_prices[price['coinType']+'-'+price['coinTypePair']] = float(price['lastDealPrice'])
 
 	elif type(client) is poloClient :
 		prices = client.returnTicker()

@@ -119,11 +119,10 @@ def verify_time(client) :
 	if type(client) is binanceClient :
 		timestamp = client.get_server_time()['serverTime']
 	elif type(client) is kucoinClient :
-		# timestamp = client.get_last_timestamp()
-		# no output here ! pass this step with currency verif
 		currencies = client.get_currencies()
-		if currencies['rates'] :
-			return True
+		# if currencies['rates'] :
+		# 	return True
+		timestamp = client.get_last_timestamp()
 	elif type(client) is poloClient :
 		# no timestamp
 		tickers = client.returnTicker()

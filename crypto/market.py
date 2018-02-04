@@ -8,6 +8,7 @@ import crypto
 from binance.client import Client as binanceClient
 from kucoin.client import Client as kucoinClient
 from poloniex import Poloniex as poloClient
+from gdax import AuthenticatedClient as gdaxClient
 
 # Return dictionary with pairs as index (ie ETH-BTC) and value.
 # Pairs are in global format.
@@ -38,6 +39,10 @@ def get_market_prices(client) :
 			p = price.split('_')
 			# print(p)
 			market_prices[p[1]+'-'+p[0]] = float(prices[price]['last'])
+
+	elif type(client) is gdaxClient :
+		# to implement
+		prices = client.returnTicker()
 
 	market_prices['ETH-ETH'] = 1
 	market_prices['BTC-BTC'] = 1

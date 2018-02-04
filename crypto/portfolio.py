@@ -3,6 +3,7 @@ import numpy as np
 
 from binance.client import Client as binanceClient
 from kucoin.client import Client as kucoinClient
+from gdax import AuthenticatedClient as gdaxClient
 
 import crypto
 

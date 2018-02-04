@@ -6,6 +6,7 @@ import xml.etree.ElementTree as ET
 from binance.client import Client as binanceClient
 from kucoin.client import Client as kucoinClient
 from poloniex import Poloniex as poloClient
+from gdax import AuthenticatedClient as gdaxClient
 
 def get_clients(file) :
 	clients = []
@@ -28,6 +29,12 @@ def get_clients(file) :
 			api_key = service.find("api_key").text
 			api_secret = service.find("api_secret").text
 			client = poloClient(api_key, api_secret)
+		elif service.get("name") == "gdax" :
+			api_key = service.find("api_key").text
+			api_secret = service.find("api_secret").text
+			api_passphrase = service.find("api_passphrase").text
+			client = gdaxClient(api_key, api_secret, api_passphrase)
+		
 
 		if verify_time(client) :
 			clients.append(client)
@@ -44,6 +51,8 @@ def get_client_name(client) :
 		return 'kucoin'
 	elif type(client) is poloClient :
 		return 'poloniex'
+	elif type(client) is gdaxClient :
+		return 'gdax'
 	else :
 		return None
 
@@ -70,6 +79,8 @@ def get_all_pairs(client) :
 		for pair in pairs.keys() :
 			p = pair.split('_')
 			list_pairs[p[1]+'_'+p[0]] = pair
+	elif type(client) is gdaxClient :
+		pairs = client.returnTicker()
 
 	# print(list_pairs)
 	# return list_pairs.values()
@@ -128,6 +139,11 @@ def verify_time(client) :
 		tickers = client.returnTicker()
 		if tickers is not None and len(tickers) > 0 :
 			return True
+	elif type(client) is gdaxClient :
+		timestamp_t = client.get_time()
+		timestamp = timestamp_t['epoch']
+		print(timestamp) # a adapter ? ex : 1517783784.87
+		return True
 
 	if not timestamp :
 		return False

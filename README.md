@@ -22,10 +22,10 @@ source activate python3
 ### Support
 
 Those tools are still in active dev, but we try to support :
-- binance
-- kucoin
-- poloniex
-- bitfinex
+- binance (working)
+- kucoin (not so far)
+- poloniex (in progress)
+- gdax (in progress)
 
 ### Binance
 
@@ -37,14 +37,15 @@ https://www.binance.com/?ref=18697575
 - Add to your config file
 
 - This code uses python-binance SDK - https://github.com/sammchardy/python-binance
+- Documentation : https://python-binance.readthedocs.io/en/latest/
 - Binance fees : https://www.binance.com/fees.html
 
 ### KuCoin
 
 In progress
 
-This code uses python-kucoin SDK -
-Documentation : https://python-kucoin.readthedocs.io
+- This code uses python-kucoin SDK - https://github.com/sammchardy/python-kucoin
+- Documentation : https://python-kucoin.readthedocs.io
 
 ### Poloniex
 
@@ -56,7 +57,11 @@ In progress
 - This code uses poloniex Aula13 SDK - https://github.com/Aula13/poloniex
 - Poloniex API documentation here https://poloniex.com/support/api/
 
-### Bitfinex
+### GDAX
+
+This code use GDAX danpaquin SDK : https://github.com/danpaquin/gdax-python
+
+### Bitfinex (not yet)
 
 - Use public API
 - https://github.com/scottjbarr/bitfinex

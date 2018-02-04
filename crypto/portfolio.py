@@ -45,7 +45,6 @@ def add_market_prices_to_portfolio(portfolio, market_prices) :
 		if s+'-BTC' in market_prices :
 			portfolio_btc.append(market_prices[s+'-BTC'])
 
-
 	portfolio['eth'] = portfolio['quantity'] * portfolio_eth
 	portfolio['btc'] = portfolio['quantity'] * portfolio_btc
 	portfolio['usd'] = portfolio['eth'] * market_prices['ETH-USDT']

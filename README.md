@@ -37,14 +37,15 @@ https://www.binance.com/?ref=18697575
 - Add to your config file
 
 - This code uses python-binance SDK - https://github.com/sammchardy/python-binance
+- Documentation : https://python-binance.readthedocs.io/en/latest/
 - Binance fees : https://www.binance.com/fees.html
 
 ### KuCoin
 
 In progress
 
-This code uses python-kucoin SDK -
-Documentation : https://python-kucoin.readthedocs.io
+- This code uses python-kucoin SDK - https://github.com/sammchardy/python-kucoin
+- Documentation : https://python-kucoin.readthedocs.io
 
 ### Poloniex
 

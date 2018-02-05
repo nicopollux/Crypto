@@ -2,14 +2,20 @@ import crypto
 
 def get_deposit_address(client,coin) :
 	if type(client) is crypto.binanceClient :
-		return client.get_deposit_address(asset=coin)['address']
+		ad = client.get_deposit_address(asset=coin)
+		if 'address' in ad :
+			return ad['address']
 	elif type(client) is crypto.kucoinClient :
 		try :
 			return client.get_deposit_address(coin)['address']
 		except :
 			return None
-
+	# Library for poloniex is not complete
+	# elif type(client) is crypto.poloClient :
+	# 	print(client.returnDepositAddresses)
 	return None
+
+
 
 def get_withdrawal_fees(client,url) :
 	return None

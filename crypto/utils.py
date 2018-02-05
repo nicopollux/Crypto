@@ -1,6 +1,14 @@
 import os
 import time, datetime
 
+import pandas as pd
+import numpy as np
+
+# for fees pages
+import urllib3
+import requests
+from bs4 import BeautifulSoup # parse page
+
 import xml.etree.ElementTree as ET
 
 import crypto
@@ -22,10 +30,10 @@ def get_clients(file) :
 			api_key = service.find("api_key").text
 			api_secret = service.find("api_secret").text
 			client = crypto.kucoinClient(api_key, api_secret)
-		elif service.get("name") == "poloniex" :
-			api_key = service.find("api_key").text
-			api_secret = service.find("api_secret").text
-			client = crypto.poloClient(api_key, api_secret)
+		# elif service.get("name") == "poloniex" :
+		# 	api_key = service.find("api_key").text
+		# 	api_secret = service.find("api_secret").text
+		# 	client = crypto.poloClient(api_key, api_secret)
 		elif service.get("name") == "gdax" :
 			api_key = service.find("api_key").text
 			api_secret = service.find("api_secret").text
@@ -113,6 +121,44 @@ def get_out_dir(file) :
 
 	return out_dir
 
+def get_fees_url(file, client) :
+	tree = ET.parse(file)
+	settings = tree.getroot()
+
+	for service in settings.findall('service') :
+		name = get_client_name(client)
+		print(name)
+		if service.get("name") == name :
+			if service.find('fees') is not None :
+				return service.find('fees').text
+	return None
+
+def get_fees(file, client) :
+	df = pd.DataFrame(columns=['coin', 'minimum', 'fee'])
+
+	fees_url = get_fees_url(file, client)
+	if fees_url is not None :
+		if type(client) is crypto.binanceClient :
+			r = requests.get(fees_url)
+			for asset in r.json() :
+				asset_code = asset['assetCode']
+				asset_name = asset['assetName']
+				asset_minimum = float(asset['minProductWithdraw'])
+				asset_fee = float(asset['transactionFee'])
+				df.loc[len(df.index)] = [asset_code,asset_minimum,asset_fee]
+
+			return df
+
+		if type(client) is crypto.kucoinClient :
+			headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+			urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+			web_page = requests.get(fees_url, headers=headers, allow_redirects=True, verify=False)
+			soup = BeautifulSoup(web_page.content, "html.parser")
+			print(soup)
+
+	print(df)
+		# table = soup.find("li", class_="td ng-scope")
+		# print(table)
 
 # Time
 current_milli_time = lambda: int(round(time.time() * 1000))
@@ -162,7 +208,7 @@ def verify_time(client) :
 	dtime_loc = datetime.datetime.fromtimestamp(time_loc).strftime('%Y-%m-%d %H:%M:%S')
 	# print('Server time is {0}ms {1}'.format(time_ser, dtime_ser))
 	# print(' Local time is {0}ms {1}'.format(time_loc, dtime_loc))
-	# print(' Delta is {}'.format(time_loc-time_ser))
+	# print(' Delta with {0} server is {1}'.format(get_client_name(client),time_loc-time_ser))
 	if time_loc - time_ser < 1000 :
 		return True
 

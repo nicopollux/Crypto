@@ -1,60 +1,44 @@
 # Crypto
-Crypto and Altcoins stuff
 
-Some python code dedicated to Altcoins.
+Python code for cryptocurrencies (coins and altcoins) manipulation.
+
+Can connect to several services (exchanges platforms) for building your own tools.
 
 ## General
 
-## Install
-
-- Install dependancies :
+Install dependancies :
 `pip install --user -r requirements.txt`
 
-- For setting a specific conda environnment :
+For setting a specific conda environnment :
 ```
 conda create -n python3 python=3.6 anaconda
 source activate python3
 ```
 
-- Copy example.xml file somewhere and rename it to something else.
-- You will use this file using `--params file.xml`
-
-### Support
-
-Those tools are still in active dev, but we try to support :
+Copy ```example.xml``` file somewhere (DO NOT KEEP IN THE SAME DIRECTORY) and rename it to something else. You will use this file using `--params file.xml`. Update params file with sections that apply :
 - binance (working)
-- kucoin (not so far)
-- poloniex (in progress)
+- kucoin (still need some tests)
+- poloniex (in progress but some problems with the lib)
 - gdax (in progress)
 
 ### Binance
 
-Binance is one of the best trading platform.
-If you don't have an account yet, please use my [referral link](https://www.binance.com/?ref=18697575)
+Binance is one of the best trading platform. If you don't have an account yet, please use my [referral link](https://www.binance.com/?ref=18697575). Next, generate API key & secret using [Binance API tool](https://www.binance.com/userCenter/createApi.html), and update the parameters file.
+This code uses [python-binance Sammchardy SDK](https://github.com/sammchardy/python-binance) documented [here](https://python-binance.readthedocs.io/en/latest/)
 
-- Generate API key & secret using [Binance API tool](https://www.binance.com/userCenter/createApi.html)
-- Update The config file
+[Binance fees are listed here](https://www.binance.com/fees.html)
 
-- This code uses [python-binance Sammchardy SDK](https://github.com/sammchardy/python-binance) documented [here](https://python-binance.readthedocs.io/en/latest/)
+### KuCoin (In progress)
 
-- [Binance fees are listed here](https://www.binance.com/fees.html)
+Another well known platform with a lot of coins.
+After creating an account, generate API key & secret using [KuCoin API tool](https://www.kucoin.com/#/user/setting/api) and update the parameters file. We use [python-kucoin Sammchardy SDK](https://github.com/sammchardy/python-kucoin) documented [here](https://python-kucoin.readthedocs.io).
 
-### KuCoin
+[Kucoin fees are listed here](https://news.kucoin.com/en/fee/)
 
-In progress
+### Poloniex (In progress)
 
-- This code uses python-kucoin SDK - https://github.com/sammchardy/python-kucoin
-- Documentation : https://python-kucoin.readthedocs.io
-
-### Poloniex
-
-In progress
-
-- Generate API key & secret https://poloniex.com/apiKeys
-- Add to your config file
-
-- This code uses poloniex Aula13 SDK - https://github.com/Aula13/poloniex
-- Poloniex API documentation here https://poloniex.com/support/api/
+Generate API key & secret on [Poloniex API tool](https://poloniex.com/apiKeys) and update parameters file
+We use [poloniex Aula13 SDK](https://github.com/Aula13/poloniex) and [official documentation is here (https://poloniex.com/support/api/)
 
 ### GDAX
 

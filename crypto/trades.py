@@ -13,6 +13,9 @@ def get_active_trades(client,market_prices) :
 	elif type(client) is crypto.poloClient :
 		# not yet implemented
 		trades = []
+	elif type(client) is crypto.gdaxClient :
+		# not yet implemented
+		trades = []
 
 	if len(trades) == 0 :
 		return pd.DataFrame()

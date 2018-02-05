@@ -16,6 +16,11 @@ def get_portfolio(client) :
 		df = pd.DataFrame(info)
 		df = df.drop(['freezeBalance','balanceStr', 'freezeBalanceStr'],1)
 		df.columns = ['quantity', 'symbol']
+	elif type(client) is crypto.gdaxClient :
+		info = client.get_accounts()
+		df = pd.DataFrame(info)
+		df = df.drop(['id','available', 'hold', 'profile_id'],1)
+		df.columns = ['quantity', 'symbol']
 	else :
 		return pd.DataFrame()
 

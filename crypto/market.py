@@ -39,8 +39,12 @@ def get_market_prices(client) :
 
 	elif type(client) is crypto.gdaxClient :
 		# to implement
-		prices = client.returnTicker()
-
+		client = crypto.gdaxPClient()
+		prices = client.get_products()
+		for price in prices :
+			pair = price['id']
+			market_prices[pair] = float(client.get_product_ticker(pair)['price'])
+	
 	market_prices['ETH-ETH'] = 1
 	market_prices['BTC-BTC'] = 1
 	if 'ETH-BTC' in market_prices :
@@ -52,6 +56,11 @@ def get_market_prices(client) :
 		market_prices['USDT-ETH'] = 1 / market_prices['ETH-USDT']
 	if 'BTC-USDT' in market_prices :
 		market_prices['USDT-BTC'] = 1 / market_prices['BTC-USDT']
+	if 'BTC-EUR' in market_prices :
+		market_prices['EUR-BTC'] = 1 / market_prices['BTC-EUR']
+	if 'ETH-USD' in market_prices :
+		market_prices['ETH-USDT'] = market_prices['ETH-USD']
+	
 
 	return market_prices
 

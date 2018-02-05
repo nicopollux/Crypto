@@ -194,8 +194,7 @@ def verify_time(client) :
 	elif type(client) is crypto.gdaxClient :
 		timestamp_t = client.get_time()
 		timestamp = int(timestamp_t['epoch'])
-		print(timestamp) # a adapter ? ex : 1517783784.87
-		return True
+		return True # a adapter ? ex : 1517783784.87
 
 	if not timestamp :
 		return False

@@ -102,13 +102,17 @@ def show_trades(trades) :
 	trades['quantity'] = trades['quantity'].map(lambda x: '%2.3f' % x)
 	# portfolio.loc['Total'] = portfolio.sum()
 
+	# add percent to complete
+	trades['%'] = (trades['target'] -  trades['price']) / trades['price']
+	trades['%'] = pd.Series(["{0:.0f}%".format(val * 100) for val in trades['%']], index = trades.index)
+
 	# remove stopPrice if not set
 	if not 0 in trades['stopPrice'].values :
-		print(trades[['quantity','target','price','stopPrice','side','type']])
+		print(trades[['quantity','target','price','stopPrice','%','side','type']])
 		# print(trades[['quantity','target','price','distance','stopPrice','type','side']])
 	else :
 		# print(trades[['quantity','target','price','distance','type','side']])
-		print(trades[['quantity','target','price','side','type']])
+		print(trades[['quantity','target','price','%','side','type']])
 
 	# Remove column with only null values
 	# trades.loc[:, (trades != 0).any(axis=0)]

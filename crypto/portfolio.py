@@ -155,7 +155,7 @@ def show_portfolio(portfolio,dust) :
 	if 'eth' not in portfolio :
 		portfolio['quantity'] = portfolio['quantity'].map(lambda x: '%2.3f' % x)
 	else :
-		portfolio['Percent'] = portfolio['eth']/ portfolio['eth'].sum()
+		portfolio['%'] = portfolio['eth']/ portfolio['eth'].sum()
 		portfolio.loc['Total'] = portfolio.sum()
 
 		portfolio['quantity'] = portfolio['quantity'].map(lambda x: '%2.2f' % x)
@@ -164,7 +164,7 @@ def show_portfolio(portfolio,dust) :
 		portfolio['usd'] = portfolio['usd'].map(lambda x: '%2.2f' % x)
 		portfolio['usd'] = portfolio['usd'].apply(pd.to_numeric)
 
-		portfolio['Percent'] = pd.Series(["{0:.0f}%".format(val * 100) for val in portfolio['Percent']], index = portfolio.index)
+		portfolio['%'] = pd.Series(["{0:.0f}%".format(val * 100) for val in portfolio['%']], index = portfolio.index)
 
 	print(portfolio[(portfolio['usd'] > dust)])
 

@@ -5,3 +5,9 @@ from crypto import trades
 from crypto import portfolio
 from crypto import calls
 from crypto import klines
+
+# Import exchange clients
+from binance.client import Client as binanceClient
+from kucoin.client import Client as kucoinClient
+from poloniex import Poloniex as poloClient
+from gdax import AuthenticatedClient as gdaxClient

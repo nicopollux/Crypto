@@ -8,24 +8,20 @@ from datetime import datetime, date
 
 import crypto
 
-from binance.client import Client as binanceClient
-from kucoin.client import Client as kucoinClient
-from poloniex import Poloniex as poloClient
-
 # Get Historical data (for training model use) :
 # pair can be 'NEOBTC'
 # when should be a date string DD/MM/YYYY
 # Warning : We stay in UTC !!
 
 def get_historical_klines(client, pair, day, dateMax) :
-	if type(client) is binanceClient :
+	if type(client) is crypto.binanceClient :
 		timestamp = int(time.mktime(day.timetuple())) * 1000
-		klines = client.get_klines(symbol=pair, interval=binanceClient.KLINE_INTERVAL_5MINUTE, startTime=timestamp)
+		klines = client.get_klines(symbol=pair, interval=crypto.binanceClient.KLINE_INTERVAL_5MINUTE, startTime=timestamp)
 	elif type(client) is kucoinClient :
 		timestamp = int(time.mktime(day.timetuple()))
 		timestamp_max = int(time.mktime(dateMax.timetuple()))
-		klines = client.get_kline_data_tv(pair, kucoinClient.RESOLUTION_5MINUTES, timestamp, timestamp_max)
-	elif type(client) is poloClient :
+		klines = client.get_kline_data_tv(pair, crypto.kucoinClient.RESOLUTION_5MINUTES, timestamp, timestamp_max)
+	elif type(client) is crypto.poloClient :
 		timestamp = int(time.mktime(day.timetuple()))
 		timestamp_max = int(time.mktime(dateMax.timetuple()))
 		klines = client.returnChartData(pair, 300, start=timestamp, end=timestamp_max)
@@ -39,7 +35,7 @@ def get_historical_klines(client, pair, day, dateMax) :
 # Reformat klines to get ['time','Open', 'High','Low','Close','Volume']
 # Return time is in UTC time
 def format_klines(client,df) :
-	if type(client) is binanceClient :
+	if type(client) is crypto.binanceClient :
 		df.columns = ['Open time','Open', 'High','Low','Close','Volume','Close time','Quote asse volume','Number of trades','Taker base','Taker quote','Ignore']
 
 		# Remove unused columns
@@ -54,7 +50,7 @@ def format_klines(client,df) :
 		df['time'] = pd.to_datetime(df['Open time'], unit='ms')
 		df = df.drop('Open time', 1)
 
-	elif type(client) is kucoinClient :
+	elif type(client) is crypto.kucoinClient :
 		df.columns = ['Close','High','Low','Open','Status','Open time','Volume']
 		df = df.drop('Status', 1)
 
@@ -66,7 +62,7 @@ def format_klines(client,df) :
 		df['time'] = pd.to_datetime(df['Open time'], unit='s')
 		df = df.drop('Open time', 1)
 
-	elif type(client) is poloClient :
+	elif type(client) is crypto.poloClient :
 		df.columns = ['Close','Open time','High','Low','Open','quoteVolume','Volume','weightedAverage']
 		df = df.drop('quoteVolume', 1)
 		df = df.drop('weightedAverage', 1)

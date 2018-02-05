@@ -3,10 +3,7 @@ import time, datetime
 
 import xml.etree.ElementTree as ET
 
-from binance.client import Client as binanceClient
-from kucoin.client import Client as kucoinClient
-from poloniex import Poloniex as poloClient
-from gdax import AuthenticatedClient as gdaxClient
+import crypto
 
 def get_clients(file) :
 	clients = []
@@ -20,21 +17,20 @@ def get_clients(file) :
 		if service.get("name") == "binance" :
 			api_key = service.find("api_key").text
 			api_secret = service.find("api_secret").text
-			client = binanceClient(api_key, api_secret)
+			client = crypto.binanceClient(api_key, api_secret)
 		elif service.get("name") == "kucoin" :
 			api_key = service.find("api_key").text
 			api_secret = service.find("api_secret").text
-			client = kucoinClient(api_key, api_secret)
+			client = crypto.kucoinClient(api_key, api_secret)
 		elif service.get("name") == "poloniex" :
 			api_key = service.find("api_key").text
 			api_secret = service.find("api_secret").text
-			client = poloClient(api_key, api_secret)
+			client = crypto.poloClient(api_key, api_secret)
 		elif service.get("name") == "gdax" :
 			api_key = service.find("api_key").text
 			api_secret = service.find("api_secret").text
 			api_passphrase = service.find("api_passphrase").text
-			client = gdaxClient(api_key, api_secret, api_passphrase)
-		
+			client = crypto.gdaxClient(api_key, api_secret, api_passphrase)
 
 		if verify_time(client) :
 			clients.append(client)
@@ -45,13 +41,13 @@ def get_clients(file) :
 	return clients
 
 def get_client_name(client) :
-	if type(client) is binanceClient :
+	if type(client) is crypto.binanceClient :
 		return 'binance'
-	elif type(client) is kucoinClient :
+	elif type(client) is crypto.kucoinClient :
 		return 'kucoin'
-	elif type(client) is poloClient :
+	elif type(client) is crypto.poloClient :
 		return 'poloniex'
-	elif type(client) is gdaxClient :
+	elif type(client) is crypto.gdaxClient :
 		return 'gdax'
 	else :
 		return None
@@ -63,23 +59,26 @@ def get_client_name(client) :
 
 def get_all_pairs(client) :
 	list_pairs = {}
-	if type(client) is binanceClient :
+	if type(client) is crypto.binanceClient :
 		pairs = client.get_all_tickers()
 		for pair in pairs :
 			if pair['symbol'] == '123456' : continue
 			p = rchop(pair['symbol'])
 			u = unit(pair['symbol'])
 			list_pairs[p+'-'+u] = pair['symbol']
-	elif type(client) is kucoinClient :
+
+	elif type(client) is crypto.kucoinClient :
 		pairs = client.get_tick()
 		for pair in pairs :
 			list_pairs[pair['coinType']+'-'+pair['coinTypePair']] = pair['coinType']+'-'+pair['coinTypePair']
-	elif type(client) is poloClient :
+
+	elif type(client) is crypto.poloClient :
 		pairs = client.returnTicker()
 		for pair in pairs.keys() :
 			p = pair.split('_')
 			list_pairs[p[1]+'_'+p[0]] = pair
-	elif type(client) is gdaxClient :
+
+	elif type(client) is crypto.gdaxClient :
 		pairs = client.returnTicker()
 
 	# print(list_pairs)
@@ -127,21 +126,24 @@ def verify_time(client) :
 		return False
 
 	timestamp = None
-	if type(client) is binanceClient :
+	if type(client) is crypto.binanceClient :
 		timestamp = client.get_server_time()['serverTime']
-	elif type(client) is kucoinClient :
+
+	elif type(client) is crypto.kucoinClient :
 		currencies = client.get_currencies()
 		# if currencies['rates'] :
 		# 	return True
 		timestamp = client.get_last_timestamp()
-	elif type(client) is poloClient :
+
+	elif type(client) is crypto.poloClient :
 		# no timestamp
 		tickers = client.returnTicker()
 		if tickers is not None and len(tickers) > 0 :
 			return True
-	elif type(client) is gdaxClient :
+
+	elif type(client) is crypto.gdaxClient :
 		timestamp_t = client.get_time()
-		timestamp = timestamp_t['epoch']
+		timestamp = int(timestamp_t['epoch'])
 		print(timestamp) # a adapter ? ex : 1517783784.87
 		return True
 

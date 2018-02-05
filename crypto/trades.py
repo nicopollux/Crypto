@@ -1,20 +1,16 @@
 import pandas as pd
 import numpy as np
 
-from binance.client import Client as binanceClient
-from kucoin.client import Client as kucoinClient
-from poloniex import Poloniex as poloClient
-
 import crypto
 
 def get_active_trades(client,market_prices) :
-	if type(client) is binanceClient :
+	if type(client) is crypto.binanceClient :
 		trades = client.get_open_orders()
 		pairs = crypto.utils.get_all_pairs(client)
-	elif type(client) is kucoinClient :
+	elif type(client) is crypto.kucoinClient :
 		# not yet implemented
 		trades = []
-	elif type(client) is poloClient :
+	elif type(client) is crypto.poloClient :
 		# not yet implemented
 		trades = []
 

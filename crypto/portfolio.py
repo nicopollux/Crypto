@@ -1,20 +1,16 @@
 import pandas as pd
 import numpy as np
 
-from binance.client import Client as binanceClient
-from kucoin.client import Client as kucoinClient
-from gdax import AuthenticatedClient as gdaxClient
-
 import crypto
 
 def get_portfolio(client) :
-	if type(client) is binanceClient :
+	if type(client) is crypto.binanceClient :
 		info = client.get_account()
 		df = pd.DataFrame(info['balances'])
 		df['free'] = df['free'].apply(pd.to_numeric)
 		df = df.drop('locked', 1)
 		df.columns = ['symbol', 'quantity']
-	elif type(client) is kucoinClient :
+	elif type(client) is crypto.kucoinClient :
 		# no info here
 		info = client.get_all_balances()
 		df = pd.DataFrame(info)

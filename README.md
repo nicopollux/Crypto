@@ -30,15 +30,14 @@ Those tools are still in active dev, but we try to support :
 ### Binance
 
 Binance is one of the best trading platform.
-If you don't have an account yet, please use my referral link :
-https://www.binance.com/?ref=18697575
+If you don't have an account yet, please use my [referral link](https://www.binance.com/?ref=18697575)
 
-- Generate API key & secret https://www.binance.com/userCenter/createApi.html
-- Add to your config file
+- Generate API key & secret using [Binance API tool](https://www.binance.com/userCenter/createApi.html)
+- Update The config file
 
-- This code uses python-binance SDK - https://github.com/sammchardy/python-binance
-- Documentation : https://python-binance.readthedocs.io/en/latest/
-- Binance fees : https://www.binance.com/fees.html
+- This code uses [python-binance Sammchardy SDK](https://github.com/sammchardy/python-binance) documented [here](https://python-binance.readthedocs.io/en/latest/)
+
+- [Binance fees are listed here](https://www.binance.com/fees.html)
 
 ### KuCoin
 

@@ -3,3 +3,5 @@ python-kucoin
 poloniex
 gdax
 pykrakenapi
+requests
+beautifulsoup4

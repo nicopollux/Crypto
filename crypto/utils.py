@@ -5,7 +5,6 @@ import pandas as pd
 import numpy as np
 
 # for fees pages
-import urllib3
 import requests
 from bs4 import BeautifulSoup # parse page
 
@@ -127,7 +126,6 @@ def get_fees_url(file, client) :
 
 	for service in settings.findall('service') :
 		name = get_client_name(client)
-		print(name)
 		if service.get("name") == name :
 			if service.find('fees') is not None :
 				return service.find('fees').text
@@ -146,19 +144,23 @@ def get_fees(file, client) :
 				asset_minimum = float(asset['minProductWithdraw'])
 				asset_fee = float(asset['transactionFee'])
 				df.loc[len(df.index)] = [asset_code,asset_minimum,asset_fee]
+			return df
+		elif type(client) is crypto.kucoinClient :
+			web_page = requests.get(fees_url)
+			soup = BeautifulSoup(web_page.content, "html.parser")
+			table = soup.find('table')
+			for row in table.find_all('tr'):
+				columns = row.find_all('td')
+				asset_code = columns[0].get_text().strip()
+				if asset_code == 'Assets' :
+					continue
+				asset_minimum = 0
+				asset_fee = columns[1].get_text()
+				df.loc[len(df.index)] = [asset_code,asset_minimum,asset_fee]
 
 			return df
 
-		if type(client) is crypto.kucoinClient :
-			headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
-			urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-			web_page = requests.get(fees_url, headers=headers, allow_redirects=True, verify=False)
-			soup = BeautifulSoup(web_page.content, "html.parser")
-			print(soup)
-
-	print(df)
-		# table = soup.find("li", class_="td ng-scope")
-		# print(table)
+	return pd.DataFrame()
 
 # Time
 current_milli_time = lambda: int(round(time.time() * 1000))
@@ -167,7 +169,7 @@ def dateparse(time_in_secs):
 	return datetime.datetime.fromtimestamp(int(time_in_secs)/1000).strftime('%d/%m/%Y %H:%M:%S')
 
 def convert_to_paris_time(client,row):
-    return pd.to_datetime(row.datetime_local).tz_convert('Europe/Paris')
+	return pd.to_datetime(row.datetime_local).tz_convert('Europe/Paris')
 
 def verify_time(client) :
 	if not client :

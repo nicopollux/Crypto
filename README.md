@@ -61,11 +61,6 @@ In progress
 
 This code use GDAX danpaquin SDK : https://github.com/danpaquin/gdax-python
 
-### Bitfinex (not yet)
-
-- Use public API
-- https://github.com/scottjbarr/bitfinex
-
 ## Portfolio
 
 Show a status of your finance portfolio in real-time, with pending transactions

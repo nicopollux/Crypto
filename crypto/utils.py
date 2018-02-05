@@ -31,6 +31,8 @@ def get_clients(file) :
 			api_secret = service.find("api_secret").text
 			api_passphrase = service.find("api_passphrase").text
 			client = crypto.gdaxClient(api_key, api_secret, api_passphrase)
+		# elif service.get("name") == "kraken" :
+		# 	from pykrakenapi import KrakenAPI
 
 		if verify_time(client) :
 			clients.append(client)

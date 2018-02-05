@@ -2,3 +2,4 @@ python-binance
 python-kucoin
 poloniex
 gdax
+pykrakenapi

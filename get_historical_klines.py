@@ -5,10 +5,6 @@ from datetime import datetime, date, timedelta
 
 import pandas as pd
 
-from binance.client import Client as binanceClient
-from kucoin.client import Client as kucoinClient
-from poloniex import Poloniex as poloClient
-
 import crypto
 
 if __name__ == "__main__":

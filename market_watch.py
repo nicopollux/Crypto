@@ -8,9 +8,6 @@ import numpy as np
 
 import crypto
 
-# from binance.client import Client as binanceClient
-# from kucoin.client import Client as kucoinClient
-
 if __name__ == "__main__":
 
 	parser = argparse.ArgumentParser()
@@ -22,32 +19,6 @@ if __name__ == "__main__":
 
 	clients = crypto.utils.get_clients(option.params)
 	out_dir = crypto.utils.get_out_dir(option.params)
-
-	# Compute table with all pairs values
-	# result = None
-	# list_clients = []
-	# dict_clients = {}
-	# for client in clients :
-	# 	name = crypto.utils.get_client_name(client)
-	# 	list_clients.append(crypto.utils.get_client_name(client))
-	# 	dict_clients[crypto.utils.get_client_name(client)] = client
-	# 	market_prices = crypto.market.get_market_prices(client)
-	# 	t = pd.DataFrame(list(market_prices.items()), columns=['pair', name])
-	# 	t[name] = t[name].apply(pd.to_numeric)
-
-	# 	if result is None :
-	# 		result = t
-	# 	else :
-	# 		result = pd.merge(result, t, on='pair', how='outer')
-	# # print(result.head(10))
-
-	# # Find maximum deltas between two platforms
-	# result['delta'] = ((result.max(axis=1) - result.min(axis=1)) / result.min(axis=1)) * 100
-	# result.sort_values(by='delta', inplace=True, ascending=False)
-	# result['deltaP'] = pd.Series(["{0:.0f}%".format(val) for val in result['delta']], index = result.index)
-
-	# result['From'] = result[list_clients].idxmin(axis=1)
-	# result['To'] = result[list_clients].idxmax(axis=1)
 
 	dict_clients = {}
 	for client in clients :

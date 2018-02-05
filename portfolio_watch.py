@@ -7,7 +7,6 @@ import numpy as np
 
 import crypto
 
-
 def get_options() :
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--params", type=str, help="file.xml", required=True)

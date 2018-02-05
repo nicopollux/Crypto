@@ -1,2 +1,7 @@
 python-binance
 python-kucoin
+poloniex
+gdax
+pykrakenapi
+requests
+beautifulsoup4

@@ -7,20 +7,26 @@ import numpy as np
 
 import crypto
 
-if __name__ == "__main__":
-
+def get_options() :
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--params", type=str, help="file.xml", required=True)
 	parser.add_argument("--save", type=bool, help="Save portfolio", default=False)
 	parser.add_argument("--dust", help="Show dust", action='store_true')
-	option = parser.parse_args()
+	parser.add_argument("--exchange", type=str, help="platform (binance or kucoin)", required=False)
+	return parser.parse_args()
 
+if __name__ == "__main__":
+
+	option = get_options()
 	clients = crypto.utils.get_clients(option.params)
 	out_dir = crypto.utils.get_out_dir(option.params)
 
 	for client in clients :
-		#print(type(client))
-		crypto.utils.verify_time(client)
+		if option.exchange is not None and option.exchange != crypto.utils.get_client_name(client) :
+			continue
+
+		print(crypto.utils.get_client_name(client))
+		# crypto.utils.verify_time(client)
 		# Get prices
 		market_prices = crypto.market.get_market_prices(client)
 
@@ -45,9 +51,8 @@ if __name__ == "__main__":
 		crypto.trades.show_trades(trades)
 
 		# In beta :
-		crypto.utils.get_ethereum_balances(option.params)
+		# crypto.utils.get_ethereum_balances(option.params)
 		#crypto.portfolio.add_original_buy_transactions(client, portfolio, market_prices)
-
 
 
 

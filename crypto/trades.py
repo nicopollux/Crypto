@@ -1,13 +1,19 @@
 import pandas as pd
 import numpy as np
 
-from binance.client import Client as binanceClient
-from kucoin.client import Client as kucoinClient
+import crypto
 
 def get_active_trades(client,market_prices) :
-	if type(client) is binanceClient :
+	if type(client) is crypto.binanceClient :
 		trades = client.get_open_orders()
-	elif type(client) is kucoinClient :
+		pairs = crypto.utils.get_all_pairs(client)
+	elif type(client) is crypto.kucoinClient :
+		# not yet implemented
+		trades = []
+	elif type(client) is crypto.poloClient :
+		# not yet implemented
+		trades = []
+	elif type(client) is crypto.gdaxClient :
 		# not yet implemented
 		trades = []
 
@@ -36,38 +42,20 @@ def get_active_trades(client,market_prices) :
 
 	actual_price = []
 	for s in df.index.values :
-		actual_price.append(market_prices[s])
+		for x, y in pairs.items():    # for name, age in list.items():  (for Python 3.x)
+			if y == s:
+				actual_price.append(market_prices[x])
 	df['price'] = actual_price
 	df['distance'] = df['target'] - df['price']
 	return df
-
-def rchop(thestring):
-	if thestring.endswith('ETH') :
-		return thestring[:-len('ETH')]
-	elif thestring.endswith('BTC') :
-		return thestring[:-len('BTC')]
-	elif thestring.endswith('USDT') :
-		return thestring[:-len('USDT')]
-	else :
-		return thestring
-
-def unit(thestring):
-	if thestring.endswith('ETH') :
-		return 'ETH'
-	elif thestring.endswith('BTC') :
-		return 'BTC'
-	elif thestring.endswith('USDT') :
-		return 'USDT'
-	else :
-		return thestring
 
 def add_active_trades_to_portfolio(portfolio, trades) :
 
 	if trades.empty :
 		return portfolio
 
-	trades['clean'] = trades.index.map(lambda x: rchop(x))
-	trades['unit'] = trades.index.map(lambda x: unit(x))
+	trades['clean'] = trades.index.map(lambda x: crypto.utils.rchop(x))
+	trades['unit'] = trades.index.map(lambda x: crypto.utils.unit(x))
 
 	# If we buy, we still have needed btc/eth/usdt
 	# If we sell, we still have the alt
@@ -117,13 +105,17 @@ def show_trades(trades) :
 	trades['quantity'] = trades['quantity'].map(lambda x: '%2.3f' % x)
 	# portfolio.loc['Total'] = portfolio.sum()
 
+	# add percent to complete
+	trades['%'] = (trades['target'] -  trades['price']) / trades['price']
+	trades['%'] = pd.Series(["{0:.0f}%".format(val * 100) for val in trades['%']], index = trades.index)
+
 	# remove stopPrice if not set
 	if not 0 in trades['stopPrice'].values :
-		print(trades[['quantity','target','price','stopPrice','side','type']])
+		print(trades[['quantity','target','price','stopPrice','%','side','type']])
 		# print(trades[['quantity','target','price','distance','stopPrice','type','side']])
 	else :
 		# print(trades[['quantity','target','price','distance','type','side']])
-		print(trades[['quantity','target','price','side','type']])
+		print(trades[['quantity','target','price','%','side','type']])
 
 	# Remove column with only null values
 	# trades.loc[:, (trades != 0).any(axis=0)]
